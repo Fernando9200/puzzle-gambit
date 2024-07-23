@@ -12,14 +12,14 @@ definePage({
 
 <template>
   <div class="wrapper full-size">
-    <TrainingSession :puzzle-colection="data" :level="2"/>
+    <TrainingSession :puzzle-colection="data" :level="2" />
   </div>
 </template>
 
 <style scoped>
 .full-size {
   width: 100%;
-  max-height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 </style>

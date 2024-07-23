@@ -63,6 +63,8 @@ const sessionClockRef = ref({
     return 0
   },
 })
+const zenMode = ref(false)
+
 function nextPuzzle() {
   solved.value = false
   allowClue.value = false
@@ -155,15 +157,13 @@ function sendClue() {
 <template>
   <v-container class="training">
     <v-row no-gutters class="training" justify="center">
-      <v-col sm="3" cols="12" class="text-center">
+      <v-col sm="3" cols="12" class="text-center" v-show="!zenMode">
         <v-row>
           <v-col cols="12">
             Session Time:
             <StopWatch ref="sessionClockRef" />
             <br />
-            <v-btn variant="outlined" @click="restartSession()"
-              >Restart Session</v-btn
-            >
+            <v-btn variant="outlined" @click="restartSession()">Restart Session</v-btn>
           </v-col>
           <v-col cols="12">
             <div :class="{ success: successOccurred }">
@@ -176,35 +176,25 @@ function sendClue() {
         </v-row>
       </v-col>
       <v-col sm="6" cols="12" class="board">
-        <ChessPuzzle
-          ref="puzzleRef"
-          @failure="handleFailure"
-          @solved="puzzleSolved"
+        <ChessPuzzle ref="puzzleRef" @failure="handleFailure" @solved="puzzleSolved"
           :key="(puzzleColection[currentPuzzle] as any).PuzzleId"
-          :puzzle-data="puzzleColection[currentPuzzle] as any"
-        />
+          :puzzle-data="puzzleColection[currentPuzzle] as any" />
       </v-col>
-      <v-col sm="3" cols="12" class="text-center">
+      <v-col sm="3" cols="12" class="text-center" v-show="!zenMode">
         <v-row no-gutters class="training" justify="center">
           <v-col cols="12">
-            <v-switch
-              inset
-              class="switch"
-              v-model="auto"
-              label="auto"
-            ></v-switch>
+            <v-switch inset class="switch" v-model="auto" label="auto"></v-switch>
             Puzzle Time:
             <StopWatch ref="puzzleClockRef" />
           </v-col>
           <v-col cols="12">
-            <v-btn :disabled="!solved" variant="outlined" @click="nextPuzzle()"
-              >NEXT</v-btn
-            >
-            <v-btn :disabled="!allowClue" variant="outlined" @click="sendClue()"
-              >clue</v-btn
-            >
+            <v-btn :disabled="!solved" variant="outlined" @click="nextPuzzle()">NEXT</v-btn>
+            <v-btn :disabled="!allowClue" variant="outlined" @click="sendClue()">clue</v-btn>
           </v-col>
         </v-row>
+      </v-col>
+      <v-col cols="12" class="text-center">
+        <v-btn variant="outlined" @click="zenMode = !zenMode">{{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -214,24 +204,30 @@ function sendClue() {
 .success {
   color: green;
 }
+
 .error {
   color: red;
 }
+
 .switch {
   display: flex;
   justify-content: center;
 }
+
 .board {
   justify-content: center;
   align-items: center;
 }
+
 .training {
   padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
+
 .text-center {
   text-align: center;
+  margin-top: -5px;
 }
 </style>

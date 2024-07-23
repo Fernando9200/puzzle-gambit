@@ -12,7 +12,7 @@ definePage({
 
 <template>
   <div class="wrapper full-size">
-    <TrainingSession :puzzle-colection="data" :level="0"/>
+    <TrainingSession :puzzle-colection="data" :level="0" />
   </div>
 </template>
 
