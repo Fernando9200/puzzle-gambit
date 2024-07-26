@@ -3,6 +3,6 @@
 </template>
 <script setup lang="ts">
 definePage({
-  redirect: 'homepage',
+  redirect: 'training_0_500',
 })
 </script>

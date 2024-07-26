@@ -24,29 +24,16 @@ nextTick(() => {
 </script>
 
 <template>
-  <v-navigation-drawer
-    v-model="drawer"
-    :expand-on-hover="rail"
-    :rail="rail"
-    @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false"
-  >
+  <v-navigation-drawer v-model="drawer" :expand-on-hover="rail" :rail="rail" @mouseenter="isHovering = true"
+    @mouseleave="isHovering = false">
     <template #prepend>
       <v-list dense nav>
         <v-list-item class="pa-1">
           <template #prepend>
-            <v-icon
-              icon="mdi-menu-close"
-              size="x-large"
-              class="drawer-header-icon"
-              :class="{ 'rotate-90': isHovering }"
-              color="primary"
-            />
+            <v-icon icon="mdi-menu-close" size="x-large" class="drawer-header-icon" :class="{ 'rotate-90': isHovering }"
+              color="primary" />
           </template>
-          <v-list-item-title
-            class="text-h6 font-weight-bold"
-            style="line-height: 2rem"
-            >Select Level
+          <v-list-item-title class="text-h6 font-weight-bold" style="line-height: 2rem">Elo Range
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -55,47 +42,6 @@ nextTick(() => {
       <AppDrawerItem v-for="route in routes" :key="route.name" :item="route" />
     </v-list>
     <v-spacer />
-    <template #append>
-      <v-list-item class="drawer-footer px-0 d-flex flex-column justify-center">
-        <div
-          class="text-caption pt-6 pb-1 pt-md-0 text-center"
-          style="white-space: nowrap"
-        >
-          <a
-            href="https://github.com/spothound/ThePawnsJourney"
-            target="_blank"
-          >
-            <v-icon
-              icon="mdi-github"
-              size="x-large"
-              class="drawer-footer-icon"
-              color="primary"
-            />
-          </a>
-        </div>
-        <div
-          class="text-caption pt-6 pb-1 pt-md-0 text-center"
-          style="white-space: nowrap"
-        >
-          <a
-            href="https://github.com/spothound/"
-            class="font-weight-bold text-primary"
-            target="_blank"
-            >by Fran N.M.</a
-          >
-        </div>
-        <br />
-        <div
-          class="text-caption pt-6 pb-1 pt-md-0 text-center"
-          style="white-space: nowrap"
-        >
-          <v-btn href="https://www.buymeacoffee.com/fnavarro" target="_blank">
-            <v-icon left>mdi-coffee</v-icon>
-            Support this
-          </v-btn>
-        </div>
-      </v-list-item>
-    </template>
   </v-navigation-drawer>
 </template>
 
@@ -105,9 +51,11 @@ nextTick(() => {
     right, top, bottom, border-radius !important;
   overflow: hidden;
   border-width: 0px !important;
+
   &.v-navigation-drawer--rail {
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
+
     &.v-navigation-drawer--is-hovering {
       border-top-right-radius: 10px;
       border-bottom-right-radius: 10px;
@@ -115,30 +63,37 @@ nextTick(() => {
         0px 1px 2px 0px rgb(0 0 0 / 30%),
         0px 1px 3px 1px rgb(0 0 0 / 15%);
     }
+
     &:not(.v-navigation-drawer--is-hovering) {
       .drawer-footer {
         transform: translateX(-160px);
       }
+
       .drawer-header-icon {
         height: 1em !important;
         width: 1em !important;
       }
+
       .v-list-group {
         --list-indent-size: 0px;
         --prepend-width: 0px;
       }
     }
   }
+
   .v-navigation-drawer__content {
     overflow-y: hidden;
+
     &:hover {
       overflow-y: overlay;
     }
   }
+
   .drawer-footer {
     transition: all 0.2s;
     min-height: 30px;
   }
+
   .drawer-header-icon {
     opacity: 1 !important;
     height: 1.2em !important;
@@ -146,9 +101,11 @@ nextTick(() => {
     transition: all 0.2s;
     margin-right: -10px;
   }
+
   .v-list-group {
     --prepend-width: 10px;
   }
+
   .v-list-item {
     transition: all 0.2s;
   }

@@ -3,7 +3,7 @@ import router from '@/plugins/router';
 import data from '../puzzles/ratings_3000_3500.json'
 definePage({
   meta: {
-    title: 'Training 3000-3500',
+    title: '3000-3500',
     icon: 'mdi-numeric-7',
     drawerIndex: 6,
   },
