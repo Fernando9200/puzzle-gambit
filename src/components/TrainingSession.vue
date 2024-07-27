@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ChessPuzzle from './ChessPuzzle.vue'
-import { ref } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import '@datadog/browser-logs/bundle/datadog-logs'
 
@@ -152,49 +152,70 @@ function restartSession() {
 function sendClue() {
   puzzleRef.value.clue()
 }
+
+onMounted(() => {
+  nextTick(() => {
+    // Force re-render to ensure the board is correctly sized
+    nextPuzzle()
+  })
+})
 </script>
 
 <template>
-  <v-container class="training">
-    <v-row no-gutters class="training" justify="center">
+  <v-container class="training" fluid>
+    <v-row class="training" justify="center">
       <v-col sm="3" cols="12" class="text-center" v-show="!zenMode">
-        <v-row>
-          <v-col cols="12">
-            Session Time:
+        <v-card outlined class="mb-4">
+          <v-card-title>Session Time</v-card-title>
+          <v-card-text>
             <StopWatch ref="sessionClockRef" />
-            <br />
-            <v-btn variant="outlined" @click="restartSession()">Restart Session</v-btn>
-          </v-col>
-          <v-col cols="12">
-            <div :class="{ success: successOccurred }">
-              Puzzles: {{ totalPuzzless }}
-            </div>
-            <div :class="{ error: errorOccurred }">
-              Errors: {{ totalErrors }}
-            </div>
-          </v-col>
-        </v-row>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" @click="restartSession()">Restart Session</v-btn>
+          </v-card-actions>
+        </v-card>
+
+        <v-card outlined>
+          <v-card-text>
+            <div :class="{ success: successOccurred }">Puzzles: {{ totalPuzzless }}</div>
+            <div :class="{ error: errorOccurred }">Errors: {{ totalErrors }}</div>
+          </v-card-text>
+        </v-card>
       </v-col>
-      <v-col sm="6" cols="12" class="board">
+
+      <v-col sm="5" cols="12" class="board">
         <ChessPuzzle ref="puzzleRef" @failure="handleFailure" @solved="puzzleSolved"
           :key="(puzzleColection[currentPuzzle] as any).PuzzleId"
           :puzzle-data="puzzleColection[currentPuzzle] as any" />
       </v-col>
+
       <v-col sm="3" cols="12" class="text-center" v-show="!zenMode">
-        <v-row no-gutters class="training" justify="center">
-          <v-col cols="12">
-            <v-switch inset class="switch" v-model="auto" label="auto"></v-switch>
-            Puzzle Time:
+        <v-card outlined class="mb-4">
+          <v-card-title>Settings</v-card-title>
+          <v-card-text>
+            <v-switch inset v-model="auto" label="Auto" />
+          </v-card-text>
+        </v-card>
+
+        <v-card outlined class="mb-4">
+          <v-card-title>Puzzle Time</v-card-title>
+          <v-card-text>
             <StopWatch ref="puzzleClockRef" />
-          </v-col>
-          <v-col cols="12">
-            <v-btn :disabled="!solved" variant="outlined" @click="nextPuzzle()">NEXT</v-btn>
-            <v-btn :disabled="!allowClue" variant="outlined" @click="sendClue()">clue</v-btn>
-          </v-col>
-        </v-row>
+          </v-card-text>
+        </v-card>
+
+        <v-card outlined>
+          <v-card-actions>
+            <v-btn :disabled="!solved" color="primary" @click="nextPuzzle()">Next</v-btn>
+            <v-btn :disabled="!allowClue" color="secondary" @click="sendClue()">Clue</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-col>
+
       <v-col cols="12" class="text-center">
-        <v-btn variant="outlined" @click="zenMode = !zenMode">{{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}</v-btn>
+        <v-btn color="info" variant="outlined" @click="zenMode = !zenMode">
+          {{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -209,25 +230,18 @@ function sendClue() {
   color: red;
 }
 
-.switch {
+.board {
   display: flex;
   justify-content: center;
-}
-
-.board {
-  justify-content: center;
   align-items: center;
-}
-
-.training {
-  padding: 0;
-  width: 100%;
-  height: 100%;
+  max-height: 100vh;
+  /* Limit the maximum height of the board */
   overflow: hidden;
+  /* Prevent content from overflowing */
 }
 
 .text-center {
   text-align: center;
-  margin-top: -5px;
+  margin-top: 0;
 }
 </style>

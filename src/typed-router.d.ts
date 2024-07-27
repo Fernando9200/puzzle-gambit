@@ -41,17 +41,17 @@ declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/[...all]': RouteRecordInfo<'/[...all]', '/:all(.*)', { all: ParamValue<true> }, { all: ParamValue<false> }>,
+    '/0_500': RouteRecordInfo<'/0_500', '/0_500', Record<never, never>, Record<never, never>>,
+    '/1000_1500': RouteRecordInfo<'/1000_1500', '/1000_1500', Record<never, never>, Record<never, never>>,
+    '/1500_2000': RouteRecordInfo<'/1500_2000', '/1500_2000', Record<never, never>, Record<never, never>>,
+    '/2000_2500': RouteRecordInfo<'/2000_2500', '/2000_2500', Record<never, never>, Record<never, never>>,
+    '/2500_3000': RouteRecordInfo<'/2500_3000', '/2500_3000', Record<never, never>, Record<never, never>>,
+    '/3000_3500': RouteRecordInfo<'/3000_3500', '/3000_3500', Record<never, never>, Record<never, never>>,
+    '/500_1000': RouteRecordInfo<'/500_1000', '/500_1000', Record<never, never>, Record<never, never>>,
     '/nested/menu1': RouteRecordInfo<'/nested/menu1', '/nested/menu1', Record<never, never>, Record<never, never>>,
     '/nested/menu2': RouteRecordInfo<'/nested/menu2', '/nested/menu2', Record<never, never>, Record<never, never>>,
     '/nested/menu2/menu2-1': RouteRecordInfo<'/nested/menu2/menu2-1', '/nested/menu2/menu2-1', Record<never, never>, Record<never, never>>,
     '/nested/menu2/menu2-2': RouteRecordInfo<'/nested/menu2/menu2-2', '/nested/menu2/menu2-2', Record<never, never>, Record<never, never>>,
-    '/training_0_500': RouteRecordInfo<'/training_0_500', '/training_0_500', Record<never, never>, Record<never, never>>,
-    '/training_1000_1500': RouteRecordInfo<'/training_1000_1500', '/training_1000_1500', Record<never, never>, Record<never, never>>,
-    '/training_1500_2000': RouteRecordInfo<'/training_1500_2000', '/training_1500_2000', Record<never, never>, Record<never, never>>,
-    '/training_2000_2500': RouteRecordInfo<'/training_2000_2500', '/training_2000_2500', Record<never, never>, Record<never, never>>,
-    '/training_2500_3000': RouteRecordInfo<'/training_2500_3000', '/training_2500_3000', Record<never, never>, Record<never, never>>,
-    '/training_3000_3500': RouteRecordInfo<'/training_3000_3500', '/training_3000_3500', Record<never, never>, Record<never, never>>,
-    '/training_500_1000': RouteRecordInfo<'/training_500_1000', '/training_500_1000', Record<never, never>, Record<never, never>>,
   }
 }
 
