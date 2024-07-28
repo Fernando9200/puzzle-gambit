@@ -22,16 +22,13 @@ h6 {
 }
 
 .v-theme--light {
-
   &.v-icon--clickable,
   &.v-btn--icon {
     color: rgba(0, 0, 0, 0.54);
   }
 
   --v-border-opacity: 0.09 !important;
-  --v-theme-background: 243,
-  243,
-  243 !important;
+  --v-theme-background: 243, 243, 243 !important;
 }
 
 .v-app-bar,
@@ -40,7 +37,7 @@ h6 {
   background-color: rgb(var(--v-theme-background)) !important;
 }
 
-.v-overlay__content>.v-card {
+.v-overlay__content > .v-card {
   overflow-y: overlay !important;
 }
 

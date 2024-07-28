@@ -3,6 +3,36 @@ import ChessPuzzle from './ChessPuzzle.vue'
 import { ref, onMounted, nextTick } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import '@datadog/browser-logs/bundle/datadog-logs'
+import { useToggle, useDark } from '@vueuse/core'
+const theme = useTheme()
+const showNavIcon = ref(false)
+const { drawer } = storeToRefs(useAppStore())
+const route = useRoute()
+const breadcrumbs = computed(() => {
+  return route!.matched
+    .slice(1)
+    .filter(
+      (item) =>
+        item.meta && item.meta.title && !(item.meta?.breadcrumb === 'hidden'),
+    )
+    .map((r) => ({
+      title: r.meta.title!,
+      disabled:
+        r.meta?.breadcrumb === 'disabled' || r.path === route.path || false,
+      to: r.path,
+    }))
+})
+const isDark = useDark({
+  onChanged(dark: boolean) {
+    theme.global.name.value = dark ? 'dark' : 'light'
+  },
+})
+const toggleDark = useToggle<true, false | null>(isDark)
+
+watchEffect(() => {
+  // Verificar si el dispositivo es táctil
+  showNavIcon.value = 'ontouchstart' in window
+})
 
 const sessionToken = localStorage.getItem('sessionToken') || uuidv4()
 localStorage.setItem('sessionToken', sessionToken)
@@ -64,6 +94,7 @@ const sessionClockRef = ref({
   },
 })
 const zenMode = ref(false)
+const showInfoModal = ref(false)
 
 function nextPuzzle() {
   solved.value = false
@@ -175,13 +206,38 @@ onMounted(() => {
           </v-card-actions>
         </v-card>
 
-        <v-card outlined>
+        <v-card outlined class="mb-4">
           <v-card-text>
             <div :class="{ success: successOccurred }">Puzzles: {{ totalPuzzless }}</div>
             <div :class="{ error: errorOccurred }">Errors: {{ totalErrors }}</div>
           </v-card-text>
         </v-card>
+
+        <v-card outlined>
+          <v-card-text>
+            <v-btn icon size="small" class="ml-2" @click="showInfoModal = true">
+              <v-icon size="30" icon="mdi-information"></v-icon>
+            </v-btn>
+            <v-btn icon href="https://github.com/spothound/ThePawnsJourney" size="small" class="ml-2" target="_blank">
+              <v-icon size="30" icon="mdi-github"></v-icon>
+            </v-btn>
+          </v-card-text>
+        </v-card>
       </v-col>
+
+      <!-- Info Modal -->
+      <v-dialog v-model="showInfoModal" max-width="600">
+        <v-card>
+          <v-card-title class="headline">Info</v-card-title>
+          <v-card-text>
+            This is the information text you want to display in the modal.
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="showInfoModal = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <v-col sm="5" cols="12" class="board">
         <ChessPuzzle ref="puzzleRef" @failure="handleFailure" @solved="puzzleSolved"
@@ -193,8 +249,18 @@ onMounted(() => {
         <v-card outlined class="mb-4">
           <v-card-title>Settings</v-card-title>
           <v-card-text>
-            <v-switch inset v-model="auto" label="Auto" />
+            <v-row class="toggle-row" justify="center">
+              <v-col cols="auto">
+                <v-switch inset v-model="auto" label="Auto" />
+              </v-col>
+              <v-col cols="auto">
+                <v-switch :model-value="isDark" color="" hide-details density="compact" inset
+                  false-icon="mdi-white-balance-sunny" true-icon="mdi-weather-night" class="dark-toggle"
+                  @update:model-value="toggleDark" />
+              </v-col>
+            </v-row>
           </v-card-text>
+
         </v-card>
 
         <v-card outlined class="mb-4">
@@ -243,5 +309,19 @@ onMounted(() => {
 .text-center {
   text-align: center;
   margin-top: 0;
+}
+
+.training {
+  margin-top: 1vh;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+}
+
+.dark-toggle {
+  margin-top: -18px
+    /* Adjust this value as needed to align the switches */
 }
 </style>
