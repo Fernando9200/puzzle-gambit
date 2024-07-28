@@ -3,7 +3,7 @@ import router from '@/plugins/router';
 import data from '../puzzles/ratings_500_1000.json'
 definePage({
   meta: {
-    icon: 'mdi-numeric-2',
+    icon: 'mdi-chess-knight',
     title: '500-1000',
     drawerIndex: 1,
   },

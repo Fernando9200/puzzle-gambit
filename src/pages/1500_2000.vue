@@ -4,7 +4,7 @@ import data from '../puzzles/ratings_1500_2000.json'
 definePage({
   meta: {
     title: '1500-2000',
-    icon: 'mdi-numeric-4',
+    icon: 'mdi-chess-rook',
     drawerIndex: 3,
   },
 })

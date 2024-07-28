@@ -279,7 +279,7 @@ onMounted(() => {
       </v-col>
 
       <v-col cols="12" class="text-center">
-        <v-btn color="info" variant="outlined" @click="zenMode = !zenMode">
+        <v-btn color="gray" variant="outlined" @click="zenMode = !zenMode">
           {{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}
         </v-btn>
       </v-col>

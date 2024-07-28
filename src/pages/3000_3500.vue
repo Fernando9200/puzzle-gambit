@@ -4,7 +4,7 @@ import data from '../puzzles/ratings_3000_3500.json'
 definePage({
   meta: {
     title: '3000-3500',
-    icon: 'mdi-numeric-7',
+    icon: 'mdi-trophy',
     drawerIndex: 6,
   },
 })

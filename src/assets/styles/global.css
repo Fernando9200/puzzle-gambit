@@ -22,9 +22,11 @@ h6 {
 }
 
 .v-theme--light {
-  &.v-icon--clickable,
-  &.v-btn--icon {
-    color: rgba(0, 0, 0, 0.54);
+  .v-icon,
+  .v-icon--clickable,
+  .v-btn--icon,
+  .v-list-item-title {
+    color: rgba(0, 0, 0, 0.54) !important;
   }
 
   --v-border-opacity: 0.09 !important;

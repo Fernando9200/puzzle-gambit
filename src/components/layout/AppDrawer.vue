@@ -25,89 +25,76 @@ nextTick(() => {
 
 <template>
   <v-navigation-drawer v-model="drawer" :expand-on-hover="rail" :rail="rail" @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false">
+    @mouseleave="isHovering = false" class="custom-navigation-drawer">
     <template #prepend>
       <v-list dense nav>
-        <v-list-item class="pa-1">
+        <v-list-item class="pa-1 custom-list-item">
           <template #prepend>
-            <v-icon icon="mdi-menu-close" size="x-large" class="drawer-header-icon" :class="{ 'rotate-90': isHovering }"
-              color="primary" />
+            <v-icon icon="mdi-menu" size="x-large" class="drawer-header-icon" color="white" />
           </template>
-          <v-list-item-title class="text-h6 font-weight-bold" style="line-height: 2rem">Elo Range
-          </v-list-item-title>
+          <v-list-item-title class="text-h6 font-weight-bold drawer-title">Elo Range</v-list-item-title>
         </v-list-item>
       </v-list>
     </template>
-    <v-list nav density="compact">
+    <v-list nav density="compact" class="custom-list">
       <AppDrawerItem v-for="route in routes" :key="route.name" :item="route" />
     </v-list>
     <v-spacer />
   </v-navigation-drawer>
 </template>
 
-<style>
-.v-navigation-drawer {
-  transition-property: box-shadow, transform, visibility, width, height, left,
-    right, top, bottom, border-radius !important;
-  overflow: hidden;
-  border-width: 0px !important;
+<style scoped>
+.custom-navigation-drawer {
+  background-color: #1e1e2f;
+  color: white;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  transition: width 0.3s, box-shadow 0.3s;
+}
 
-  &.v-navigation-drawer--rail {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
+.custom-navigation-drawer:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
 
-    &.v-navigation-drawer--is-hovering {
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
-      box-shadow:
-        0px 1px 2px 0px rgb(0 0 0 / 30%),
-        0px 1px 3px 1px rgb(0 0 0 / 15%);
-    }
+.custom-list-item {
+  align-items: center;
+  justify-content: space-between;
+}
 
-    &:not(.v-navigation-drawer--is-hovering) {
-      .drawer-footer {
-        transform: translateX(-160px);
-      }
+.drawer-header-icon {
+  transition: transform 0.3s;
+}
 
-      .drawer-header-icon {
-        height: 1em !important;
-        width: 1em !important;
-      }
+.drawer-header-icon.rotate-90 {
+  transform: rotate(90deg);
+}
 
-      .v-list-group {
-        --list-indent-size: 0px;
-        --prepend-width: 0px;
-      }
-    }
-  }
+.drawer-title {
+  color: #ffc107;
+  text-transform: uppercase;
+}
 
-  .v-navigation-drawer__content {
-    overflow-y: hidden;
+.custom-list {
+  padding: 10px;
+}
 
-    &:hover {
-      overflow-y: overlay;
-    }
-  }
+.custom-list .v-list-item {
+  border-radius: 8px;
+  margin: 5px 0;
+  transition: background-color 0.3s, transform 0.3s;
+}
 
-  .drawer-footer {
-    transition: all 0.2s;
-    min-height: 30px;
-  }
+.custom-list .v-list-item:hover {
+  background-color: #ffc107;
+  transform: translateX(5px);
+}
 
-  .drawer-header-icon {
-    opacity: 1 !important;
-    height: 1.2em !important;
-    width: 1.2em !important;
-    transition: all 0.2s;
-    margin-right: -10px;
-  }
+.v-navigation-drawer__content {
+  overflow-y: hidden;
+}
 
-  .v-list-group {
-    --prepend-width: 10px;
-  }
-
-  .v-list-item {
-    transition: all 0.2s;
-  }
+.v-navigation-drawer__content:hover {
+  overflow-y: overlay;
 }
 </style>

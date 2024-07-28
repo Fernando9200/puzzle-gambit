@@ -22,23 +22,13 @@ const icon = computed(() => props.item.meta?.icon)
 </script>
 
 <template>
-  <v-list-item
-    v-if="isItem && icon"
-    :to="{ name: item.name || visibleChildren?.[0].name }"
-    :prepend-icon="icon"
-    active-class="text-primary"
-    :title="title"
-  >
+  <v-list-item v-if="isItem && icon" :to="{ name: item.name || visibleChildren?.[0].name }" :prepend-icon="icon"
+    active-class="text-primary" :title="title">
   </v-list-item>
   <v-list-group v-else-if="icon" :prepend-icon="icon" color="primary">
     <template #activator="{ props: vProps }">
       <v-list-item :title="title" v-bind="vProps"></v-list-item>
     </template>
-    <AppDrawerItem
-      v-for="child in visibleChildren"
-      :key="child.name"
-      :item="child"
-      :level="level + 1"
-    />
+    <AppDrawerItem v-for="child in visibleChildren" :key="child.name" :item="child" :level="level + 1" />
   </v-list-group>
 </template>
