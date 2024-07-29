@@ -22,12 +22,20 @@ const breadcrumbs = computed(() => {
       to: r.path,
     }))
 })
+// Function to get the initial dark mode state from local storage
+const getInitialDarkMode = () => {
+  const storedDarkMode = localStorage.getItem('darkMode');
+  return storedDarkMode ? JSON.parse(storedDarkMode) : true; // Default to true if not set
+};
+
+// Initialize the dark mode state with the value from local storage
 const isDark = useDark({
-  value: true,
+  value: getInitialDarkMode(),
   onChanged(dark: boolean) {
-    theme.global.name.value = dark ? 'dark' : 'light'
+    theme.global.name.value = dark ? 'dark' : 'light';
+    localStorage.setItem('darkMode', JSON.stringify(dark)); // Save the state to local storage
   },
-})
+});
 const toggleDark = useToggle<true, false | null>(isDark)
 
 watchEffect(() => {
