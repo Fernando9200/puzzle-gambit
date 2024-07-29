@@ -23,6 +23,7 @@ const breadcrumbs = computed(() => {
     }))
 })
 const isDark = useDark({
+  initial: true,
   onChanged(dark: boolean) {
     theme.global.name.value = dark ? 'dark' : 'light'
   },
