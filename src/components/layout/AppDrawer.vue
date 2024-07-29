@@ -73,6 +73,9 @@ nextTick(() => {
 .drawer-title {
   color: red;
   text-transform: uppercase;
+  font-size: 1.5rem;
+  /* Adjust as needed */
+  line-height: 1.2;
 }
 
 .custom-list {

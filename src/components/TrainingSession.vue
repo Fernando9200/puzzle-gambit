@@ -30,7 +30,6 @@ const isDark = useDark({
 const toggleDark = useToggle<true, false | null>(isDark)
 
 watchEffect(() => {
-  // Verificar si el dispositivo es táctil
   showNavIcon.value = 'ontouchstart' in window
 })
 
@@ -64,7 +63,7 @@ const props = defineProps({
   },
 })
 
-const auto = ref(false)
+const auto = ref(true)
 const totalErrors = ref(0)
 const currentErrors = ref(0)
 const allowClue = ref(false)
@@ -201,8 +200,17 @@ onMounted(() => {
           <v-card-text>
             <StopWatch ref="sessionClockRef" />
           </v-card-text>
+        </v-card>
+
+        <v-card outlined class="mb-4">
           <v-card-actions class="justify-center">
-            <v-btn color="primary" @click="restartSession()">Restart Session</v-btn>
+            <v-card-actions class="justify-center" style="padding: 20px;">
+              <v-btn color="white" @click="restartSession()" class="ma-2" elevation="5" rounded x-large
+                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+                <v-icon left>mdi-restart</v-icon>
+                Restart Session
+              </v-btn>
+            </v-card-actions>
           </v-card-actions>
         </v-card>
 
@@ -224,7 +232,7 @@ onMounted(() => {
             <v-btn icon size="small" class="ml-2" @click="showInfoModal = true">
               <v-icon size="30" icon="mdi-information"></v-icon>
             </v-btn>
-            <v-btn icon href="https://github.com/spothound/ThePawnsJourney" size="small" class="ml-2" target="_blank">
+            <v-btn icon href="https://github.com/Fernando9200/chess" size="small" class="ml-2" target="_blank">
               <v-icon size="30" icon="mdi-github"></v-icon>
             </v-btn>
           </v-card-text>
@@ -276,10 +284,19 @@ onMounted(() => {
           </v-card-text>
         </v-card>
 
-        <v-card outlined>
-          <v-card-actions class="justify-center">
-            <v-btn :disabled="!solved" color="primary" @click="nextPuzzle()">Next</v-btn>
-            <v-btn :disabled="!allowClue" color="secondary" @click="sendClue()">Clue</v-btn>
+        <v-card outlined class="mb-4">
+          <v-card-actions class="justify-center" style="padding: 20px;">
+            <v-btn :disabled="!solved" color="white" @click="nextPuzzle()" class="ma-2" elevation="5" rounded x-large
+              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+              <v-icon left>mdi-arrow-right-bold-circle-outline</v-icon>
+              Next
+            </v-btn>
+
+            <v-btn :disabled="!allowClue" color="white" @click="sendClue()" class="ma-2" elevation="5" rounded x-large
+              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+              <v-icon left>mdi-lightbulb</v-icon>
+              Clue
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
