@@ -63,6 +63,7 @@ const props = defineProps({
   },
 })
 
+const dark = ref(true)
 const auto = ref(true)
 const totalErrors = ref(0)
 const currentErrors = ref(0)
