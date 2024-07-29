@@ -25,7 +25,7 @@ nextTick(() => {
 
 <template>
   <v-navigation-drawer v-model="drawer" :expand-on-hover="rail" :rail="rail" @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false" class="custom-navigation-drawer">
+    @mouseleave="isHovering = false" class="custom-navigation-drawer" :width="200">
     <template #prepend>
       <v-list dense nav>
         <v-list-item class="pa-1 custom-list-item">
@@ -71,7 +71,7 @@ nextTick(() => {
 }
 
 .drawer-title {
-  color: #ffc107;
+  color: red;
   text-transform: uppercase;
 }
 
@@ -86,7 +86,7 @@ nextTick(() => {
 }
 
 .custom-list .v-list-item:hover {
-  background-color: #ffc107;
+  background-color: red;
   transform: translateX(5px);
 }
 

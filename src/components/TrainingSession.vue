@@ -201,15 +201,21 @@ onMounted(() => {
           <v-card-text>
             <StopWatch ref="sessionClockRef" />
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="justify-center">
             <v-btn color="primary" @click="restartSession()">Restart Session</v-btn>
           </v-card-actions>
         </v-card>
 
         <v-card outlined class="mb-4">
-          <v-card-text>
-            <div :class="{ success: successOccurred }">Puzzles: {{ totalPuzzless }}</div>
-            <div :class="{ error: errorOccurred }">Errors: {{ totalErrors }}</div>
+          <v-card-text class="counter-card">
+            <div :class="{ success: successOccurred }" class="counter">
+              <v-icon color="green" size="24">mdi-check-circle</v-icon>
+              <span class="counter-text">Completed: {{ totalPuzzless }}</span>
+            </div>
+            <div :class="{ error: errorOccurred }" class="counter">
+              <v-icon color="red" size="24">mdi-close-circle</v-icon>
+              <span class="counter-text">Missed: {{ totalErrors }}</span>
+            </div>
           </v-card-text>
         </v-card>
 
@@ -271,7 +277,7 @@ onMounted(() => {
         </v-card>
 
         <v-card outlined>
-          <v-card-actions>
+          <v-card-actions class="justify-center">
             <v-btn :disabled="!solved" color="primary" @click="nextPuzzle()">Next</v-btn>
             <v-btn :disabled="!allowClue" color="secondary" @click="sendClue()">Clue</v-btn>
           </v-card-actions>
@@ -323,5 +329,23 @@ onMounted(() => {
 .dark-toggle {
   margin-top: -18px
     /* Adjust this value as needed to align the switches */
+}
+
+.counter-card {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.counter-text {
+  margin-left: 8px;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 </style>

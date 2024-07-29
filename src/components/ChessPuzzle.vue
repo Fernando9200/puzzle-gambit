@@ -39,20 +39,20 @@ const boardConfig: BoardConfig = reactive({
 
 // Functions
 
-function solvedPuzzle () {
+function solvedPuzzle() {
   emit('solved', moves, failures);
   new Audio(confirmationSound).play()
 }
 
 function DetectFailure() {
-  if(invalidMove.value) {
+  if (invalidMove.value) {
     invalidMove.value = false
     failures++
     goBack()
   }
 }
 
-function runEnemyMove () {
+function runEnemyMove() {
   if (pendingMoves.length === 0) {
     solvedPuzzle()
     return
@@ -62,7 +62,7 @@ function runEnemyMove () {
   boardAPI?.move(nextMove)
 }
 
-function validMove (move: string): boolean {
+function validMove(move: string): boolean {
   if (pendingMoves.length === 0) {
     return false
   }
@@ -70,7 +70,7 @@ function validMove (move: string): boolean {
   return move === pendingMoves[0]
 }
 
-function handlePlayerMove (move: MoveEvent) {
+function handlePlayerMove(move: MoveEvent) {
   moves++
   if (boardAPI?.getIsCheckmate()) {
     solvedPuzzle()
@@ -86,7 +86,7 @@ function handlePlayerMove (move: MoveEvent) {
   }
 }
 
-function handleMove (move: MoveEvent) {
+function handleMove(move: MoveEvent) {
   if (move.captured) {
     new Audio(captureSound).play()
   } else {
@@ -125,23 +125,23 @@ onMounted(async () => {
   playerColor = boardAPI?.getLastMove()?.color === 'w' ? 'black' : 'white'
 })
 
-function goBack () {
+function goBack() {
   moves--
   boardAPI?.undoLastMove()
   invalidMove.value = false
 }
 
-function clue () {
+function clue() {
   if (pendingMoves.length > 0) {
     const nextMove = pendingMoves[0]
-        boardAPI?.setShapes([
-        {
-          orig: nextMove.slice(0, 2),
-          dest: nextMove.slice(2, 4),
-          brush: 'paleGreen'
-        },
-      ])
-    }
+    boardAPI?.setShapes([
+      {
+        orig: nextMove.slice(0, 2),
+        dest: nextMove.slice(2, 4),
+        brush: 'paleGreen'
+      },
+    ])
+  }
 }
 
 defineExpose({ clue });
@@ -149,7 +149,8 @@ defineExpose({ clue });
 </script>
 
 <template>
-  <TheChessboard class="chessboard-visualization" @move="handleMove" @board-created="(api: any) => (boardAPI = api)" :player-color="playerColor" :board-config="boardConfig" reactive-config />
+  <TheChessboard class="chessboard-visualization" @move="handleMove" @board-created="(api: any) => (boardAPI = api)"
+    :player-color="playerColor" :board-config="boardConfig" reactive-config />
 </template>
 
 <style scoped>
