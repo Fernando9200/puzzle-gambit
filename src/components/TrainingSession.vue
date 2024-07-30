@@ -311,6 +311,16 @@ watchEffect(() => {
 </template>
 
 <style scoped>
+html,
+body,
+#app,
+.v-application,
+.v-container {
+  height: 100%;
+  overflow-y: auto;
+  /* Ensure the container allows vertical scrolling */
+}
+
 .success {
   color: green;
 }
@@ -324,9 +334,7 @@ watchEffect(() => {
   justify-content: center;
   align-items: center;
   max-height: 100vh;
-  /* Limit the maximum height of the board */
-  overflow: hidden;
-  /* Prevent content from overflowing */
+  /* overflow: hidden;  <-- Ensure this is removed */
 }
 
 .text-center {
@@ -336,6 +344,8 @@ watchEffect(() => {
 
 .training {
   margin-top: 1vh;
+  overflow-y: auto;
+  /* Ensure the container allows vertical scrolling */
 }
 
 .toggle-row {
@@ -344,8 +354,8 @@ watchEffect(() => {
 }
 
 .dark-toggle {
-  margin-top: -18px
-    /* Adjust this value as needed to align the switches */
+  margin-top: -18px;
+  /* Adjust this value as needed to align the switches */
 }
 
 .counter-card {
