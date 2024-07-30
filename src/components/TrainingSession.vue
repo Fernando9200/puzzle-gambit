@@ -4,6 +4,7 @@ import { ref, onMounted, nextTick, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import '@datadog/browser-logs/bundle/datadog-logs'
 import { useToggle } from '@vueuse/core'
+
 const theme = useTheme()
 const showNavIcon = ref(false)
 const { drawer } = storeToRefs(useAppStore())
@@ -28,15 +29,15 @@ const isDark = ref(true)
 
 // Watch for changes in the dark mode state
 watch(isDark, (dark) => {
-  theme.global.name.value = dark ? 'dark' : 'light';
-  localStorage.setItem('darkMode', JSON.stringify(dark)); // Save the state to local storage
-});
-
-const toggleDark = useToggle(isDark)
-
-watchEffect(() => {
-  showNavIcon.value = 'ontouchstart' in window
+  theme.global.name.value = dark ? 'dark' : 'light'
+  localStorage.setItem('darkMode', JSON.stringify(dark)) // Save the state to local storage
 })
+
+const toggleDark = (value: boolean | null) => {
+  if (value !== null) {
+    isDark.value = value
+  }
+}
 
 const sessionToken = localStorage.getItem('sessionToken') || uuidv4()
 localStorage.setItem('sessionToken', sessionToken)
@@ -194,6 +195,10 @@ onMounted(() => {
     nextPuzzle()
   })
 })
+
+watchEffect(() => {
+  showNavIcon.value = 'ontouchstart' in window
+})
 </script>
 
 <template>
@@ -275,7 +280,8 @@ onMounted(() => {
               <v-col cols="auto">
                 <v-switch v-model="isDark" color="" hide-details density="compact" inset
                   :true-icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-                  :false-icon="!isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" class="dark-toggle" />
+                  :false-icon="!isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" class="dark-toggle"
+                  @update:model-value="toggleDark" />
               </v-col>
             </v-row>
           </v-card-text>
