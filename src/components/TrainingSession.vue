@@ -29,6 +29,7 @@ const isDark = useDark({
     theme.global.name.value = dark ? 'dark' : 'light'
   },
 })
+isDark.value = true
 const toggleDark = useToggle<true, false | null>(isDark)
 
 const sessionToken = localStorage.getItem('sessionToken') || uuidv4()
