@@ -197,7 +197,7 @@ watchEffect(() => {
 <template>
   <v-container class="training" fluid>
     <v-row class="training" justify="center">
-      <v-col sm="3" cols="12" class="text-center" v-show="!zenMode">
+      <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
         <v-card outlined class="mb-4">
           <v-card-title>Session Time</v-card-title>
           <v-card-text>
@@ -206,14 +206,12 @@ watchEffect(() => {
         </v-card>
 
         <v-card outlined class="mb-4">
-          <v-card-actions class="justify-center">
-            <v-card-actions class="justify-center" style="padding: 20px;">
-              <v-btn color="white" @click="restartSession()" class="ma-2" elevation="5" rounded x-large
-                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-                <v-icon left>mdi-restart</v-icon>
-                Restart Session
-              </v-btn>
-            </v-card-actions>
+          <v-card-actions class="justify-center" style="padding: 20px;">
+            <v-btn color="white" @click="restartSession()" class="ma-2" elevation="5" rounded x-large
+              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+              <v-icon left>mdi-restart</v-icon>
+              Restart Session
+            </v-btn>
           </v-card-actions>
         </v-card>
 
@@ -256,13 +254,13 @@ watchEffect(() => {
         </v-card>
       </v-dialog>
 
-      <v-col sm="5" cols="12" class="board">
+      <v-col sm="8" md="5" cols="12" class="board">
         <ChessPuzzle ref="puzzleRef" @failure="handleFailure" @solved="puzzleSolved"
           :key="(puzzleColection[currentPuzzle] as any).PuzzleId"
           :puzzle-data="puzzleColection[currentPuzzle] as any" />
       </v-col>
 
-      <v-col sm="3" cols="12" class="text-center" v-show="!zenMode">
+      <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
         <v-card outlined class="mb-4">
           <v-card-title>Settings</v-card-title>
           <v-card-text>
@@ -277,7 +275,6 @@ watchEffect(() => {
               </v-col>
             </v-row>
           </v-card-text>
-
         </v-card>
 
         <v-card outlined class="mb-4">
@@ -355,6 +352,8 @@ watchEffect(() => {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
+  /* Allow wrapping on smaller screens */
 }
 
 .counter {
