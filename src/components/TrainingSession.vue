@@ -23,14 +23,8 @@ const breadcrumbs = computed(() => {
     }))
 })
 
-// Function to get the initial dark mode state from local storage
-const getInitialDarkMode = () => {
-  const storedDarkMode = localStorage.getItem('darkMode');
-  return storedDarkMode ? JSON.parse(storedDarkMode) : true; // Default to true if not set
-};
-
 // Initialize the dark mode state with the value from local storage
-const isDark = ref(getInitialDarkMode())
+const isDark = ref(true)
 
 // Watch for changes in the dark mode state
 watch(isDark, (dark) => {
@@ -280,9 +274,8 @@ onMounted(() => {
               </v-col>
               <v-col cols="auto">
                 <v-switch v-model="isDark" color="" hide-details density="compact" inset
-                  :false-icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-                  :true-icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'" class="dark-toggle"
-                  @update:model-value="toggleDark" />
+                  :true-icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+                  :false-icon="!isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" class="dark-toggle" />
               </v-col>
             </v-row>
           </v-card-text>
