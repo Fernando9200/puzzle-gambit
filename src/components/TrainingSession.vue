@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ChessPuzzle from './ChessPuzzle.vue'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import '@datadog/browser-logs/bundle/datadog-logs'
-import { useToggle, useDark } from '@vueuse/core'
+import { useToggle } from '@vueuse/core'
 const theme = useTheme()
 const showNavIcon = ref(false)
 const { drawer } = storeToRefs(useAppStore())
@@ -22,6 +22,7 @@ const breadcrumbs = computed(() => {
       to: r.path,
     }))
 })
+
 // Function to get the initial dark mode state from local storage
 const getInitialDarkMode = () => {
   const storedDarkMode = localStorage.getItem('darkMode');
@@ -29,14 +30,15 @@ const getInitialDarkMode = () => {
 };
 
 // Initialize the dark mode state with the value from local storage
-const isDark = useDark({
-  value: getInitialDarkMode(),
-  onChanged(dark: boolean) {
-    theme.global.name.value = dark ? 'dark' : 'light';
-    localStorage.setItem('darkMode', JSON.stringify(dark)); // Save the state to local storage
-  },
+const isDark = ref(getInitialDarkMode())
+
+// Watch for changes in the dark mode state
+watch(isDark, (dark) => {
+  theme.global.name.value = dark ? 'dark' : 'light';
+  localStorage.setItem('darkMode', JSON.stringify(dark)); // Save the state to local storage
 });
-const toggleDark = useToggle<true, false | null>(isDark)
+
+const toggleDark = useToggle(isDark)
 
 watchEffect(() => {
   showNavIcon.value = 'ontouchstart' in window
@@ -277,8 +279,9 @@ onMounted(() => {
                 <v-switch inset v-model="auto" label="Auto" />
               </v-col>
               <v-col cols="auto">
-                <v-switch :model-value="isDark" color="" hide-details density="compact" inset
-                  false-icon="mdi-white-balance-sunny" true-icon="mdi-weather-night" class="dark-toggle"
+                <v-switch v-model="isDark" color="" hide-details density="compact" inset
+                  :false-icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+                  :true-icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'" class="dark-toggle"
                   @update:model-value="toggleDark" />
               </v-col>
             </v-row>
