@@ -7,8 +7,9 @@ import { useDisplay } from 'vuetify'
 const appStore = useAppStore()
 const { drawer: drawerStored } = storeToRefs(appStore)
 
-const { mobile, lgAndUp, width } = useDisplay()
-const drawer = computed({
+const { mobile } = useDisplay()
+
+const drawer = computed<boolean>({
   get() {
     return drawerStored.value || !mobile.value
   },
@@ -16,13 +17,15 @@ const drawer = computed({
     drawerStored.value = val
   },
 })
+
 const rail = computed(() => !drawerStored.value && !mobile.value)
+
 routes.sort((a, b) => (a.meta?.drawerIndex ?? 99) - (b.meta?.drawerIndex ?? 98))
 
 const isHovering = ref(false)
 
 const drawerWidth = computed(() => {
-  return mobile.value ? '100vw' : 200
+  return mobile.value ? '75vw' : '200px'
 })
 
 nextTick(() => {
@@ -32,7 +35,14 @@ nextTick(() => {
 const toggleDrawer = () => {
   drawerStored.value = !drawerStored.value
 }
+
+const closeDrawer = () => {
+  if (mobile.value) {
+    drawerStored.value = false
+  }
+}
 </script>
+
 
 <template>
   <div>
@@ -42,7 +52,7 @@ const toggleDrawer = () => {
     </v-btn>
 
     <v-navigation-drawer v-model="drawer" :expand-on-hover="rail" :rail="rail" @mouseenter="isHovering = true"
-      @mouseleave="isHovering = false" class="custom-navigation-drawer" :width="drawerWidth">
+      @mouseleave="isHovering = false" class="custom-navigation-drawer" :width="drawerWidth" @click="closeDrawer">
       <template #prepend>
         <v-list dense nav>
           <v-list-item class="pa-1 custom-list-item">
@@ -54,12 +64,13 @@ const toggleDrawer = () => {
         </v-list>
       </template>
       <v-list nav density="compact" class="custom-list">
-        <AppDrawerItem v-for="route in routes" :key="route.name" :item="route" />
+        <AppDrawerItem v-for="route in routes" :key="route.name" :item="route" @click="closeDrawer" />
       </v-list>
       <v-spacer />
     </v-navigation-drawer>
   </div>
 </template>
+
 
 <style scoped>
 .custom-navigation-drawer {
@@ -126,5 +137,24 @@ const toggleDrawer = () => {
   z-index: 1000;
   background-color: #1e1e2f;
   color: white;
+}
+
+@media (max-width: 600px) {
+  .custom-navigation-drawer {
+    width: 75vw;
+    border-radius: 0;
+  }
+
+  .custom-list-item {
+    padding: 0;
+  }
+
+  .drawer-title {
+    font-size: 1.2rem;
+  }
+
+  .custom-list .v-list-item {
+    margin: 2px 0;
+  }
 }
 </style>
