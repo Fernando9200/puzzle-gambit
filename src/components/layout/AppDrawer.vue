@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { routes } from 'vue-router/auto/routes'
+import { useAppStore } from '@/stores/app'
+import { storeToRefs } from 'pinia'
+import { useDisplay } from 'vuetify'
 
 const appStore = useAppStore()
 const { drawer: drawerStored } = storeToRefs(appStore)
@@ -18,29 +21,44 @@ routes.sort((a, b) => (a.meta?.drawerIndex ?? 99) - (b.meta?.drawerIndex ?? 98))
 
 const isHovering = ref(false)
 
+const drawerWidth = computed(() => {
+  return mobile.value ? '100vw' : 200
+})
+
 nextTick(() => {
   drawerStored.value = false
 })
+
+const toggleDrawer = () => {
+  drawerStored.value = !drawerStored.value
+}
 </script>
 
 <template>
-  <v-navigation-drawer v-model="drawer" :expand-on-hover="rail" :rail="rail" @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false" class="custom-navigation-drawer" :width="200">
-    <template #prepend>
-      <v-list dense nav>
-        <v-list-item class="pa-1 custom-list-item">
-          <template #prepend>
-            <v-icon icon="mdi-menu" size="x-large" class="drawer-header-icon" color="white" />
-          </template>
-          <v-list-item-title class="text-h6 font-weight-bold drawer-title">Elo Range</v-list-item-title>
-        </v-list-item>
+  <div>
+    <!-- Toggle button for mobile -->
+    <v-btn v-if="mobile" @click="toggleDrawer" class="mobile-menu-toggle" icon>
+      <v-icon>mdi-menu</v-icon>
+    </v-btn>
+
+    <v-navigation-drawer v-model="drawer" :expand-on-hover="rail" :rail="rail" @mouseenter="isHovering = true"
+      @mouseleave="isHovering = false" class="custom-navigation-drawer" :width="drawerWidth">
+      <template #prepend>
+        <v-list dense nav>
+          <v-list-item class="pa-1 custom-list-item">
+            <template #prepend>
+              <v-icon icon="mdi-menu" size="x-large" class="drawer-header-icon" color="white" />
+            </template>
+            <v-list-item-title class="text-h6 font-weight-bold drawer-title">Elo Range</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </template>
+      <v-list nav density="compact" class="custom-list">
+        <AppDrawerItem v-for="route in routes" :key="route.name" :item="route" />
       </v-list>
-    </template>
-    <v-list nav density="compact" class="custom-list">
-      <AppDrawerItem v-for="route in routes" :key="route.name" :item="route" />
-    </v-list>
-    <v-spacer />
-  </v-navigation-drawer>
+      <v-spacer />
+    </v-navigation-drawer>
+  </div>
 </template>
 
 <style scoped>
@@ -99,5 +117,14 @@ nextTick(() => {
 
 .v-navigation-drawer__content:hover {
   overflow-y: overlay;
+}
+
+.mobile-menu-toggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: #1e1e2f;
+  color: white;
 }
 </style>
