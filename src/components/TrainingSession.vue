@@ -354,7 +354,7 @@ body,
 }
 
 .dark-toggle {
-  margin-top: -18px;
+  margin-top: -20px;
   /* Adjust this value as needed to align the switches */
 }
 

@@ -43,7 +43,6 @@ const closeDrawer = () => {
 }
 </script>
 
-
 <template>
   <div>
     <!-- Toggle button for mobile -->
@@ -70,7 +69,6 @@ const closeDrawer = () => {
     </v-navigation-drawer>
   </div>
 </template>
-
 
 <style scoped>
 .custom-navigation-drawer {
@@ -135,7 +133,7 @@ const closeDrawer = () => {
   top: 10px;
   left: 10px;
   z-index: 1000;
-  background-color: #1e1e2f;
+  background-color: #7b7b7b;
   color: white;
 }
 
