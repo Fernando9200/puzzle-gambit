@@ -133,7 +133,7 @@ const closeDrawer = () => {
   top: 10px;
   left: 10px;
   z-index: 1000;
-  background-color: #7b7b7b;
+  background-color: #6d6b6b;
   color: white;
 }
 
