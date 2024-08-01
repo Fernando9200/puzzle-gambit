@@ -245,7 +245,8 @@ watchEffect(() => {
         <v-card>
           <v-card-title class="headline">Info</v-card-title>
           <v-card-text>
-            This is the information text you want to display in the modal.
+            This app uses chess puzzles from the Lichess database to boost your tactical skills. Pick your skill level,
+            and you'll get puzzles that match your abilities.
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
