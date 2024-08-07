@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import ChessPuzzle from './ChessPuzzle.vue'
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { ref, onMounted, nextTick, watch, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import '@datadog/browser-logs/bundle/datadog-logs'
 import { useToggle, useDark } from '@vueuse/core'
+import { useRoute } from 'vue-router'
 
+// Initialize theme and dark mode
 const theme = useTheme()
 const showNavIcon = ref(false)
-const { drawer } = storeToRefs(useAppStore())
 const route = useRoute()
+
+// Compute breadcrumbs from the route
 const breadcrumbs = computed(() => {
   return route!.matched
     .slice(1)
@@ -24,6 +27,7 @@ const breadcrumbs = computed(() => {
     }))
 })
 
+// Handle theme changes
 const isDark = useDark({
   onChanged(dark: boolean) {
     theme.global.name.value = dark ? 'dark' : 'light'
@@ -32,15 +36,18 @@ const isDark = useDark({
 isDark.value = true
 const toggleDark = useToggle<true, false | null>(isDark)
 
+// Initialize session token
 const sessionToken = localStorage.getItem('sessionToken') || uuidv4()
 localStorage.setItem('sessionToken', sessionToken)
 
+// Declare global window interface for Datadog logs
 declare global {
   interface Window {
     DD_LOGS: any
   }
 }
 
+// Initialize Datadog logs
 window.DD_LOGS.init({
   clientToken: 'pubc17749f9323600ef9e82cfd995039870',
   site: 'us5.datadoghq.com',
@@ -48,9 +55,11 @@ window.DD_LOGS.init({
   sessionSampleRate: 100,
 })
 
+// Log user connection
 window.DD_LOGS.logger.info('User connected', { sessionToken: sessionToken })
 console.log('User connected', { sessionToken: sessionToken })
 
+// Define component props
 const props = defineProps({
   level: {
     type: Number,
@@ -62,6 +71,7 @@ const props = defineProps({
   },
 })
 
+// Define reactive variables
 const auto = ref(true)
 const totalErrors = ref(0)
 const currentErrors = ref(0)
@@ -94,37 +104,42 @@ const sessionClockRef = ref({
 const zenMode = ref(false)
 const showInfoModal = ref(false)
 
+// Select the next puzzle
 function nextPuzzle() {
   solved.value = false
   allowClue.value = false
   currentErrors.value = 0
   puzzleClockRef.value.restart()
-  // get an array of indices where puzzleRankings equals -1
+  // Get an array of indices where puzzleRankings equals -1
   const unplayedPuzzles = puzzleRankings
     .map((ranking, index) => (ranking === -1 ? index : -1))
     .filter((index) => index !== -1)
-  // if there are no unplayed puzzles, do nothing
+  // If there are no unplayed puzzles, do nothing
   if (unplayedPuzzles.length === 0)
     Math.floor(Math.random() * puzzleRankings.length)
-  // get a random index from unplayedPuzzles
+  // Get a random index from unplayedPuzzles
   const randomIndex = Math.floor(Math.random() * unplayedPuzzles.length)
   currentPuzzle.value = unplayedPuzzles[randomIndex]
 }
 
+// Call nextPuzzle function on component setup
 nextPuzzle()
 
+// Show error animation
 async function showError() {
   errorOccurred.value = true
   await new Promise((resolve) => setTimeout(resolve, 1000))
   errorOccurred.value = false
 }
 
+// Show success animation
 async function showSuccess() {
   successOccurred.value = true
   await new Promise((resolve) => setTimeout(resolve, 1000))
   successOccurred.value = false
 }
 
+// Calculate puzzle rank
 function calculateRank(timeElapsed: number, moves: number, failures: number) {
   let rank = 0
   const averageTime = timeElapsed / moves
@@ -137,6 +152,7 @@ function calculateRank(timeElapsed: number, moves: number, failures: number) {
   return rank
 }
 
+// Handle puzzle failure
 function handleFailure() {
   if (currentErrors.value == 0) {
     totalErrors.value++
@@ -147,6 +163,7 @@ function handleFailure() {
   if (auto.value) nextPuzzle()
 }
 
+// Handle puzzle solved
 function puzzleSolved(moves: number, failures: number) {
   showSuccess()
   totalPuzzless.value++
@@ -166,6 +183,7 @@ function puzzleSolved(moves: number, failures: number) {
   if (auto.value) nextPuzzle()
 }
 
+// Restart session
 function restartSession() {
   totalErrors.value = 0
   totalPuzzless.value = 0
@@ -178,10 +196,12 @@ function restartSession() {
   nextPuzzle()
 }
 
+// Send clue to puzzle
 function sendClue() {
   puzzleRef.value.clue()
 }
 
+// Component mounted hook
 onMounted(() => {
   nextTick(() => {
     // Force re-render to ensure the board is correctly sized
@@ -189,6 +209,7 @@ onMounted(() => {
   })
 })
 
+// Watch for touch events to show navigation icon
 watchEffect(() => {
   showNavIcon.value = 'ontouchstart' in window
 })
@@ -297,6 +318,18 @@ watchEffect(() => {
               style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
               <v-icon left>mdi-lightbulb</v-icon>
               Clue
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card outlined class="mb-4">
+          <v-card-actions class="justify-center" style="padding: 20px;">
+            <!-- Go to Lichess Button -->
+            <v-btn color="gray"
+              :href="`https://lichess.org/training/${(puzzleColection[currentPuzzle] as any).PuzzleId}`" class="ma-2"
+              elevation="5" rounded x-large style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);"
+              target="_blank">
+              <v-icon left>mdi-chess-knight</v-icon>
+              Open on Lichess
             </v-btn>
           </v-card-actions>
         </v-card>
