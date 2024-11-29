@@ -257,6 +257,9 @@ watchEffect(() => {
             <v-btn icon href="https://github.com/Fernando9200/chess" size="small" class="ml-2" target="_blank">
               <v-icon size="30" icon="mdi-github"></v-icon>
             </v-btn>
+            <v-btn icon href="https://www.linkedin.com/in/fernando-carretto/" size="small" class="ml-2" target="_blank">
+              <v-icon size="30" icon="mdi-linkedin"></v-icon>
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -266,8 +269,11 @@ watchEffect(() => {
         <v-card>
           <v-card-title class="headline">Info</v-card-title>
           <v-card-text>
-            This app uses chess puzzles from the Lichess database to boost your tactical skills. Pick your skill level,
-            and you'll get puzzles that match your abilities.
+            This app uses chess puzzles from the Lichess database to help you improve your tactical skills. You can pick
+            your skill level and stick with it, allowing you to practice as much as you need at a difficulty that feels
+            right for you. Unlike Lichess, which automatically adjusts your level and sometimes pushes you into puzzles
+            that are too challenging, this app focuses on steady, targeted improvement. By training at your own pace,
+            you can build a solid foundation and see real progress in your tactics.
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
