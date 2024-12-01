@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import ChessPuzzle from './ChessPuzzle.vue'
-import { VProgressLinear } from 'vuetify/components' // Ensure Vuetify components are imported if needed
+import { VProgressLinear } from 'vuetify/components'
 
-interface PuzzleData {
+interface BasePuzzleData {
   PuzzleId: string;
   FEN: string;
   Moves: string;
@@ -13,7 +13,15 @@ interface PuzzleData {
   NbPlays: number;
   Themes: string;
   GameUrl: string;
+  OpeningTags: string | null;
+  originalLevel?: number;
+  originalIndex?: number;
   [key: string]: any;
+}
+
+interface ExtendedPuzzleData extends BasePuzzleData {
+  originalLevel: number;
+  originalIndex: number;
 }
 
 const props = defineProps({
@@ -22,12 +30,12 @@ const props = defineProps({
     required: true,
   },
   puzzleCollection: {
-    type: Array as () => PuzzleData[],
+    type: Array as () => BasePuzzleData[],
     required: true,
   },
 })
 
-const failedPuzzles = ref<PuzzleData[]>([])
+const failedPuzzles = ref<ExtendedPuzzleData[]>([])
 const currentPuzzleIndex = ref(0)
 const puzzleRef = ref<InstanceType<typeof ChessPuzzle> | null>(null)
 const allowClue = ref(false)
@@ -52,10 +60,8 @@ onMounted(() => {
 })
 
 const loadFailedPuzzles = () => {
-  const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${props.level}`) || '[]') as number[]
-  failedPuzzles.value = failedPuzzleIndices
-    .map((index: number) => props.puzzleCollection[index])
-    .filter((puzzle): puzzle is PuzzleData => puzzle !== undefined)
+  // The puzzles are now already loaded with their original level and index
+  failedPuzzles.value = props.puzzleCollection as ExtendedPuzzleData[]
 
   // Initialize progress tracking
   totalPuzzles.value = failedPuzzles.value.length
@@ -98,22 +104,21 @@ const puzzleSolved = () => {
   console.log('Puzzle solved in review mode')
   showSuccess()
 
-  // Increment the solved puzzles count
   solvedPuzzlesCount.value++
 
-  // Remove the solved puzzle from failed puzzles list
-  const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${props.level}`) || '[]') as number[]
-  const currentPuzzleId = failedPuzzles.value[currentPuzzleIndex.value].PuzzleId
-  const updatedIndices = failedPuzzleIndices.filter((index: number) =>
-    props.puzzleCollection[index]?.PuzzleId !== currentPuzzleId
-  )
+  const currentPuzzle = failedPuzzles.value[currentPuzzleIndex.value]
+  const level = currentPuzzle.originalLevel
 
-  localStorage.setItem(`failedPuzzles_${props.level}`, JSON.stringify(updatedIndices))
+  // Get the failed puzzles for the specific level
+  const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${level}`) || '[]') as number[]
+  const updatedIndices = failedPuzzleIndices.filter(index => index !== currentPuzzle.originalIndex)
+
+  // Update the localStorage for the specific level
+  localStorage.setItem(`failedPuzzles_${level}`, JSON.stringify(updatedIndices))
 
   // Remove puzzle from current view
   failedPuzzles.value.splice(currentPuzzleIndex.value, 1)
 
-  // Adjust current index if needed
   if (currentPuzzleIndex.value >= failedPuzzles.value.length && currentPuzzleIndex.value > 0) {
     currentPuzzleIndex.value = Math.max(0, failedPuzzles.value.length - 1)
   }
@@ -122,24 +127,30 @@ const puzzleSolved = () => {
 }
 
 const removePuzzle = () => {
-  const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${props.level}`) || '[]') as number[]
-  const currentPuzzleId = failedPuzzles.value[currentPuzzleIndex.value].PuzzleId
-  const updatedIndices = failedPuzzleIndices.filter((index: number) =>
-    props.puzzleCollection[index]?.PuzzleId !== currentPuzzleId
-  )
+  const currentPuzzle = failedPuzzles.value[currentPuzzleIndex.value]
+  const level = currentPuzzle.originalLevel
 
-  localStorage.setItem(`failedPuzzles_${props.level}`, JSON.stringify(updatedIndices))
+  // Get the failed puzzles for the specific level
+  const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${level}`) || '[]') as number[]
+  const updatedIndices = failedPuzzleIndices.filter(index => index !== currentPuzzle.originalIndex)
+
+  // Update the localStorage for the specific level
+  localStorage.setItem(`failedPuzzles_${level}`, JSON.stringify(updatedIndices))
+
   failedPuzzles.value.splice(currentPuzzleIndex.value, 1)
-  totalPuzzles.value -= 1  // Decrease total when removing a puzzle
+  totalPuzzles.value -= 1
 
-  // Adjust current index if needed
   if (currentPuzzleIndex.value >= failedPuzzles.value.length && currentPuzzleIndex.value > 0) {
     currentPuzzleIndex.value = Math.max(0, failedPuzzles.value.length - 1)
   }
 }
 
 const clearFailedPuzzles = () => {
-  localStorage.setItem(`failedPuzzles_${props.level}`, '[]')
+  // Clear failed puzzles from all levels
+  for (let level = 0; level <= 6; level++) {
+    localStorage.setItem(`failedPuzzles_${level}`, '[]')
+  }
+
   failedPuzzles.value = []
   currentPuzzleIndex.value = 0
   solvedPuzzlesCount.value = 0
@@ -156,7 +167,6 @@ const sendClue = () => {
 <template>
   <v-container class="training" fluid>
     <v-row class="training" justify="center">
-
       <!-- Empty State: No Failed Puzzles -->
       <template v-if="failedPuzzles.length === 0">
         <v-col cols="12" class="text-center">
@@ -171,9 +181,8 @@ const sendClue = () => {
 
       <!-- Main Interface: Displayed When There Are Failed Puzzles -->
       <template v-else>
-
         <!-- Left Column -->
-        <v-col sm="6" md="3" cols="12" class="text-center">
+        <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
           <v-card outlined class="mb-4">
             <v-card-title class="text-h6">Failed Puzzles Review</v-card-title>
             <v-card-subtitle>Practice the puzzles you got wrong</v-card-subtitle>
@@ -249,7 +258,7 @@ const sendClue = () => {
         </v-col>
 
         <!-- Right Column -->
-        <v-col sm="6" md="3" cols="12" class="text-center">
+        <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
           <v-card outlined class="mb-4">
             <v-card-title class="text-h6">Actions</v-card-title>
             <v-card-text class="d-flex flex-column gap-2">
@@ -282,9 +291,7 @@ const sendClue = () => {
             {{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}
           </v-btn>
         </v-col>
-
       </template>
-
     </v-row>
   </v-container>
 </template>
