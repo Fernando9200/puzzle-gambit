@@ -2,6 +2,14 @@
 import { ref, onMounted, computed } from 'vue'
 import ChessPuzzle from './ChessPuzzle.vue'
 import { VProgressLinear } from 'vuetify/components'
+import FailedPuzzlesAnalysis from '@/components/FailedPuzzlesAnalysis.vue'
+import puzzles0_500 from '@/puzzles/ratings_0_500.json'
+import puzzles500_1000 from '@/puzzles/ratings_500_1000.json'
+import puzzles1000_1500 from '@/puzzles/ratings_1000_1500.json'
+import puzzles1500_2000 from '@/puzzles/ratings_1500_2000.json'
+import puzzles2000_2500 from '@/puzzles/ratings_2000_2500.json'
+import puzzles2500_3000 from '@/puzzles/ratings_2500_3000.json'
+import puzzles3000_3500 from '@/puzzles/ratings_3000_3500.json'
 
 interface BasePuzzleData {
   PuzzleId: string;
@@ -22,6 +30,17 @@ interface BasePuzzleData {
 interface ExtendedPuzzleData extends BasePuzzleData {
   originalLevel: number;
   originalIndex: number;
+}
+
+// Get all puzzle collections
+const puzzleCollections: Record<number, BasePuzzleData[]> = {
+  0: puzzles0_500 as BasePuzzleData[],
+  1: puzzles500_1000 as BasePuzzleData[],
+  2: puzzles1000_1500 as BasePuzzleData[],
+  3: puzzles1500_2000 as BasePuzzleData[],
+  4: puzzles2000_2500 as BasePuzzleData[],
+  5: puzzles2500_3000 as BasePuzzleData[],
+  6: puzzles3000_3500 as BasePuzzleData[],
 }
 
 const props = defineProps({
@@ -54,6 +73,43 @@ const progressPercentage = computed(() => {
   const percentage = (solvedPuzzlesCount.value / totalPuzzles.value) * 100
   return Math.min(percentage, 100) // Ensure it doesn't exceed 100%
 })
+
+// Compute current puzzle's skill level
+const currentPuzzleSkillLevel = computed(() => {
+  const rating = failedPuzzles.value[currentPuzzleIndex.value]?.Rating || 0
+
+  if (rating < 500) return { level: 'Beginner', color: 'green' }
+  if (rating < 1000) return { level: 'Novice', color: 'light-green' }
+  if (rating < 1500) return { level: 'Intermediate', color: 'blue' }
+  if (rating < 2000) return { level: 'Advanced', color: 'purple' }
+  if (rating < 2500) return { level: 'Expert', color: 'orange' }
+  if (rating < 3000) return { level: 'Master', color: 'deep-orange' }
+  return { level: 'Grandmaster', color: 'red' }
+})
+
+// Load puzzles from all levels that were failed
+const getAllFailedPuzzles = (): BasePuzzleData[] => {
+  const allFailedPuzzles: BasePuzzleData[] = []
+
+  for (let level = 0; level <= 6; level++) {
+    const failedIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${level}`) || '[]') as number[]
+    const levelPuzzles = failedIndices.map(index => {
+      const puzzle = puzzleCollections[level][index]
+      if (puzzle) {
+        return {
+          ...puzzle,
+          originalLevel: level,
+          originalIndex: index
+        }
+      }
+      return null
+    }).filter(Boolean) as BasePuzzleData[]
+
+    allFailedPuzzles.push(...levelPuzzles)
+  }
+
+  return allFailedPuzzles
+}
 
 onMounted(() => {
   loadFailedPuzzles()
@@ -162,6 +218,14 @@ const sendClue = () => {
     puzzleRef.value.clue()
   }
 }
+
+definePage({
+  meta: {
+    icon: 'mdi-alert-circle',
+    title: 'Failed Puzzles',
+    drawerIndex: 7,
+  },
+})
 </script>
 
 <template>
@@ -259,6 +323,22 @@ const sendClue = () => {
 
         <!-- Right Column -->
         <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
+          <!-- Puzzle Info Card -->
+          <v-card outlined class="mb-4">
+            <v-card-title class="text-h6">Puzzle Info</v-card-title>
+            <v-card-text>
+              <div class="d-flex flex-column align-center">
+                <div class="text-h5 mb-2" :class="`${currentPuzzleSkillLevel.color}--text`">
+                  {{ currentPuzzleSkillLevel.level }}
+                </div>
+                <div class="text-subtitle-1">
+                  Rating: {{ failedPuzzles[currentPuzzleIndex].Rating }}
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+
+          <!-- Actions Card -->
           <v-card outlined class="mb-4">
             <v-card-title class="text-h6">Actions</v-card-title>
             <v-card-text class="d-flex flex-column gap-2">
