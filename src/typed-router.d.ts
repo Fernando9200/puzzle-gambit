@@ -48,6 +48,7 @@ declare module 'vue-router/auto/routes' {
     '/2500_3000': RouteRecordInfo<'/2500_3000', '/2500_3000', Record<never, never>, Record<never, never>>,
     '/3000_3500': RouteRecordInfo<'/3000_3500', '/3000_3500', Record<never, never>, Record<never, never>>,
     '/500_1000': RouteRecordInfo<'/500_1000', '/500_1000', Record<never, never>, Record<never, never>>,
+    '/failed-puzzles': RouteRecordInfo<'/failed-puzzles', '/failed-puzzles', Record<never, never>, Record<never, never>>,
     '/nested/menu1': RouteRecordInfo<'/nested/menu1', '/nested/menu1', Record<never, never>, Record<never, never>>,
     '/nested/menu2': RouteRecordInfo<'/nested/menu2', '/nested/menu2', Record<never, never>, Record<never, never>>,
     '/nested/menu2/menu2-1': RouteRecordInfo<'/nested/menu2/menu2-1', '/nested/menu2/menu2-1', Record<never, never>, Record<never, never>>,

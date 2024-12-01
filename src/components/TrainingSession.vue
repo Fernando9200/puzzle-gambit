@@ -155,12 +155,29 @@ function calculateRank(timeElapsed: number, moves: number, failures: number) {
 // Handle puzzle failure
 function handleFailure() {
   if (currentErrors.value == 0) {
+    // Save current puzzle to failed puzzles list if not already there
+    const failedPuzzles = JSON.parse(localStorage.getItem(`failedPuzzles_${props.level}`) || '[]')
+    if (!failedPuzzles.includes(currentPuzzle.value)) {
+      failedPuzzles.push(currentPuzzle.value)
+      localStorage.setItem(`failedPuzzles_${props.level}`, JSON.stringify(failedPuzzles))
+      console.log('Added puzzle to failed list:', {
+        puzzleIndex: currentPuzzle.value,
+        totalFailed: failedPuzzles.length
+      })
+    }
+
     totalErrors.value++
     showError()
   }
   currentErrors.value++
   if (currentErrors.value > 0) allowClue.value = true
   if (auto.value) nextPuzzle()
+}
+
+// Optional: Add a function to clear failed puzzles history
+function clearFailedPuzzles() {
+  localStorage.setItem(`failedPuzzles_${props.level}`, '[]')
+  console.log('Cleared failed puzzles history')
 }
 
 // Handle puzzle solved
@@ -187,11 +204,8 @@ function puzzleSolved(moves: number, failures: number) {
 function restartSession() {
   totalErrors.value = 0
   totalPuzzless.value = 0
-  puzzleRankings.fill(-1)
-  localStorage.setItem(
-    `puzzleRankings_${props.level}`,
-    JSON.stringify(puzzleRankings),
-  )
+  // Uncomment the next line if you want to clear failed puzzles when restarting session
+  clearFailedPuzzles()
   sessionClockRef.value.restart()
   nextPuzzle()
 }
@@ -247,6 +261,16 @@ watchEffect(() => {
               <span class="counter-text">Missed: {{ totalErrors }}</span>
             </div>
           </v-card-text>
+        </v-card>
+
+        <v-card outlined class="mb-4">
+          <v-card-actions class="justify-center" style="padding: 20px;">
+            <v-btn color="white" to="/failed-puzzles" class="ma-2" elevation="5" rounded x-large
+              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+              <v-icon left>mdi-alert-circle</v-icon>
+              Review Failed Puzzles
+            </v-btn>
+          </v-card-actions>
         </v-card>
 
         <v-card outlined>

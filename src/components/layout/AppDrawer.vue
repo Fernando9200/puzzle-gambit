@@ -58,7 +58,7 @@ const closeDrawer = () => {
             <template #prepend>
               <v-icon icon="mdi-menu" size="x-large" class="drawer-header-icon" color="white" />
             </template>
-            <v-list-item-title class="text-h6 font-weight-bold drawer-title">Elo Range</v-list-item-title>
+            <v-list-item-title class="text-h6 font-weight-bold drawer-title">Menu</v-list-item-title>
           </v-list-item>
         </v-list>
       </template>
