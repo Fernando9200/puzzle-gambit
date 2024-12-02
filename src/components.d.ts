@@ -20,6 +20,7 @@ declare module 'vue' {
     FailedPuzzlesAnalysis: typeof import('./components/FailedPuzzlesAnalysis.vue')['default']
     RankingView: typeof import('./components/RankingView.vue')['default']
     RouterWrapper: typeof import('./components/layout/RouterWrapper.vue')['default']
+    SessionResultsDisplay: typeof import('./components/SessionResultsDisplay.vue')['default']
     StatsCard: typeof import('./components/StatsCard.vue')['default']
     StopWatch: typeof import('./components/StopWatch.vue')['default']
     TrainingSession: typeof import('./components/TrainingSession.vue')['default']

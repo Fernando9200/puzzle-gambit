@@ -53,6 +53,7 @@ declare module 'vue-router/auto/routes' {
     '/nested/menu2': RouteRecordInfo<'/nested/menu2', '/nested/menu2', Record<never, never>, Record<never, never>>,
     '/nested/menu2/menu2-1': RouteRecordInfo<'/nested/menu2/menu2-1', '/nested/menu2/menu2-1', Record<never, never>, Record<never, never>>,
     '/nested/menu2/menu2-2': RouteRecordInfo<'/nested/menu2/menu2-2', '/nested/menu2/menu2-2', Record<never, never>, Record<never, never>>,
+    '/results-page': RouteRecordInfo<'/results-page', '/results-page', Record<never, never>, Record<never, never>>,
   }
 }
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import ChessPuzzle from './ChessPuzzle.vue'
-import { ref, onMounted, nextTick, watch, computed } from 'vue'
+import { ref, onMounted, nextTick, watch, computed, onBeforeUnmount } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import '@datadog/browser-logs/bundle/datadog-logs'
 import { useToggle, useDark } from '@vueuse/core'
 import { useRoute } from 'vue-router'
+import { sessionStorage } from '@/services/sessionStorage'
 
 // Initialize theme and dark mode
 const theme = useTheme()
@@ -25,6 +26,19 @@ const breadcrumbs = computed(() => {
         r.meta?.breadcrumb === 'disabled' || r.path === route.path || false,
       to: r.path,
     }))
+})
+
+const currentPuzzleSkillLevel = computed(() => {
+  const puzzle = props.puzzleColection[currentPuzzle.value] as any
+  const rating = puzzle?.Rating || 0
+
+  if (rating < 500) return { level: 'Beginner', color: 'green' }
+  if (rating < 1000) return { level: 'Novice', color: 'light-green' }
+  if (rating < 1500) return { level: 'Intermediate', color: 'blue' }
+  if (rating < 2000) return { level: 'Advanced', color: 'purple' }
+  if (rating < 2500) return { level: 'Expert', color: 'orange' }
+  if (rating < 3000) return { level: 'Master', color: 'deep-orange' }
+  return { level: 'Grandmaster', color: 'red' }
 })
 
 // Handle theme changes
@@ -200,11 +214,29 @@ function puzzleSolved(moves: number, failures: number) {
   if (auto.value) nextPuzzle()
 }
 
+function saveCurrentSession() {
+  if (totalPuzzless.value > 0 || totalErrors.value > 0) {
+    const sessionTime = sessionClockRef.value.stop()
+    const accuracyRate = (totalPuzzless.value / (totalPuzzless.value + totalErrors.value)) * 100
+
+    sessionStorage.saveSession({
+      skillLevel: props.level,
+      totalTime: sessionTime,
+      puzzlesSolved: totalPuzzless.value,
+      puzzlesFailed: totalErrors.value,
+      accuracyRate: accuracyRate
+    })
+  }
+}
+
 // Restart session
 function restartSession() {
+  // Save the current session before restarting
+  saveCurrentSession()
+
+  // Reset the session
   totalErrors.value = 0
   totalPuzzless.value = 0
-  // Uncomment the next line if you want to clear failed puzzles when restarting session
   clearFailedPuzzles()
   sessionClockRef.value.restart()
   nextPuzzle()
@@ -223,9 +255,23 @@ onMounted(() => {
   })
 })
 
+onBeforeUnmount(() => {
+  saveCurrentSession()
+})
+
 // Watch for touch events to show navigation icon
 watchEffect(() => {
   showNavIcon.value = 'ontouchstart' in window
+})
+
+watch(() => props.level, (newLevel, oldLevel) => {
+  if (oldLevel !== undefined) {  // Don't save on initial level set
+    saveCurrentSession()
+    // Reset for new level
+    totalErrors.value = 0
+    totalPuzzless.value = 0
+    sessionClockRef.value.restart()
+  }
 })
 </script>
 
@@ -313,6 +359,18 @@ watchEffect(() => {
       </v-col>
 
       <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
+        <v-card outlined class="mb-4">
+          <v-card-text>
+            <div class="d-flex flex-column align-center">
+              <div class="text-h5 mb-2" :class="`${currentPuzzleSkillLevel.color}--text`">
+                {{ currentPuzzleSkillLevel.level }}
+              </div>
+              <div class="text-subtitle-1">
+                Rating: {{ (puzzleColection[currentPuzzle] as any)?.Rating }}
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
         <v-card outlined class="mb-4">
           <v-card-title>Settings</v-card-title>
           <v-card-text>
