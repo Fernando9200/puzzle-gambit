@@ -396,7 +396,7 @@ body,
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 1.7rem;
+  padding-top: 2.3rem;
   /* Changed from 2.7rem to 1.7rem to maintain consistency */
 }
 
