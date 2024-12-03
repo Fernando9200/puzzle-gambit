@@ -350,7 +350,6 @@ definePage({
 .v-container {
   height: 100%;
   overflow-y: auto;
-  /* Ensure the container allows vertical scrolling */
 }
 
 .training {
@@ -363,7 +362,6 @@ definePage({
   position: sticky;
   top: 2rem;
   padding-top: 0.85rem;
-  /* Changed from 2rem to 1rem */
 }
 
 .stats-card,
@@ -390,7 +388,6 @@ definePage({
   justify-content: center;
   align-items: center;
   padding-top: 2.3rem;
-  /* Changed from 2.7rem to 1.7rem to maintain consistency */
 }
 
 .board-wrapper {
@@ -511,6 +508,22 @@ definePage({
 
   .v-btn {
     height: 36px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .navigation-controls .v-btn {
+    min-width: 90px !important;
+    padding: 0 5px !important;
+    font-size: 0.875rem;
+  }
+
+  .navigation-controls .v-icon {
+    font-size: 12px;
+  }
+
+  .navigation-controls .text-body-1 {
+    font-size: 0.875rem !important;
   }
 }
 
