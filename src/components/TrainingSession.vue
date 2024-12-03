@@ -307,10 +307,6 @@ watch(() => props.level, (newLevel, oldLevel) => {
 
           <v-card class="mb-4 action-card" elevation="3">
             <v-card-actions class="action-buttons">
-              <v-card-title class="d-flex align-center justify-center">
-                <v-icon left color="primary" class="mr-2">mdi-lightning-bolt</v-icon>
-                Actions
-              </v-card-title>
               <v-btn color="primary" @click="restartSession()" class="action-button" elevation="2" rounded>
                 <v-icon left>mdi-restart</v-icon>
                 Restart Session

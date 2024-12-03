@@ -308,10 +308,6 @@ definePage({
             </v-card>
 
             <v-card class="mb-4 action-card" elevation="3">
-              <v-card-title class="d-flex align-center justify-center">
-                <v-icon left color="primary" class="mr-2">mdi-lightning-bolt</v-icon>
-                Actions
-              </v-card-title>
               <v-card-text>
                 <v-card-actions class="action-buttons">
                   <v-btn color="info"
