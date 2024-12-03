@@ -424,11 +424,11 @@ watch(() => props.level, (newLevel, oldLevel) => {
       <v-card class="info-modal" elevation="3">
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>
-          This app uses chess puzzles from the Lichess database to help you improve your tactical skills. You can pick
-          your skill level and stick with it, allowing you to practice as much as you need at a difficulty that feels
-          right for you. Unlike Lichess, which automatically adjusts your level and sometimes pushes you into puzzles
-          that are too challenging, this app focuses on steady, targeted improvement. By training at your own pace,
-          you can see real progress in your tactics.
+          This app uses chess puzzles from the Lichess database to help you improve your tactical skills. Choose your
+          skill level and stick with it. Practice as much as you need at a difficulty that feels right for you. Unlike
+          Lichess, which changes your level automatically and sometimes gives you puzzles that are too hard, this app
+          focuses on steady improvement. You can retry puzzles you failed and track your results, such as session time
+          and accuracy. By training at your own pace, you can see real progress in your tactics.
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
