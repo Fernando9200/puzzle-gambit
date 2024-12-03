@@ -441,10 +441,6 @@ watch(() => props.level, (newLevel, oldLevel) => {
 </template>
 
 <style scoped>
-html,
-body,
-#app,
-.v-application,
 .v-container {
   height: 100%;
   overflow-y: auto;
@@ -454,15 +450,13 @@ body,
 .training {
   min-height: 100vh;
   padding: 0.5rem;
+  width: 100%;
 }
-
 
 .cards-container {
   position: sticky;
   top: 2rem;
-  /* Increased space from top */
   padding-top: 2rem;
-  /* Added padding to match board spacing */
 }
 
 .stats-card,
@@ -486,7 +480,6 @@ body,
 
 .info-modal {
   background: rgba(0, 0, 0, 0.95) !important;
-  /* Black background with high opacity */
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -529,7 +522,6 @@ body,
   justify-content: center;
   align-items: flex-start;
   padding-top: 2.9rem;
-  /* Increased space from top to match cards */
 }
 
 .chess-board {
@@ -559,6 +551,10 @@ body,
 }
 
 @media (max-width: 600px) {
+  .board-container {
+    padding-top: 5rem;
+  }
+
   .counter-card {
     flex-direction: row;
   }
@@ -571,15 +567,9 @@ body,
     font-size: 1.25rem;
   }
 
-  .board-container {
-    padding-top: 1rem;
-    /* Adjusted for mobile */
-  }
-
   .cards-container {
     position: static;
     padding-top: 1rem;
-    /* Adjusted for mobile */
   }
 
   .zen-toggle {
