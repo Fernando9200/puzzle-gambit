@@ -378,8 +378,9 @@ watch(() => props.level, (newLevel, oldLevel) => {
               Settings
             </v-card-title>
             <v-card-text>
-              <div class="d-flex justify-space-around align-center">
-                <v-switch v-model="auto" label="Auto Next" inset color="primary" />
+              <div class="d-flex align-center justify-center">
+                <v-switch class="d-flex align-center justify-center" v-model="auto" label="Auto Next" inset
+                  color="primary" />
 
               </div>
             </v-card-text>
