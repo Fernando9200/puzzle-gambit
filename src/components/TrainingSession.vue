@@ -277,226 +277,301 @@ watch(() => props.level, (newLevel, oldLevel) => {
 
 <template>
   <v-container class="training" fluid>
-    <v-row class="training" justify="center">
+    <v-row class="training" justify="center" align="start">
+      <!-- Left Column -->
       <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
-        <v-card outlined class="mb-4">
-          <v-card-title>Session Time</v-card-title>
-          <v-card-text>
-            <StopWatch ref="sessionClockRef" />
-          </v-card-text>
-        </v-card>
+        <div class="cards-container">
+          <v-card class="mb-4 stats-card" elevation="3">
+            <v-card-title class="d-flex align-center justify-center">
+              <v-icon left color="primary" class="mr-2">mdi-clock-outline</v-icon>
+              Session Time
+            </v-card-title>
+            <v-card-text>
+              <StopWatch ref="sessionClockRef" class="time-display" />
+            </v-card-text>
+          </v-card>
 
-        <v-card outlined class="mb-4">
-          <v-card-actions class="justify-center" style="padding: 20px;">
-            <v-btn color="white" @click="restartSession()" class="ma-2" elevation="5" rounded x-large
-              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-              <v-icon left>mdi-restart</v-icon>
-              Restart Session
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+          <v-card class="mb-4 stats-card" elevation="3">
+            <v-card-text class="counter-card">
+              <div :class="{ 'success-counter': successOccurred }" class="counter">
+                <v-icon color="success" size="32">mdi-check-circle</v-icon>
+                <span class="counter-text">{{ totalPuzzless }}</span>
+              </div>
+              <div class="divider"></div>
+              <div :class="{ 'error-counter': errorOccurred }" class="counter">
+                <v-icon color="error" size="32">mdi-close-circle</v-icon>
+                <span class="counter-text">{{ totalErrors }}</span>
+              </div>
+            </v-card-text>
+          </v-card>
 
-        <v-card outlined class="mb-4">
-          <v-card-text class="counter-card">
-            <div :class="{ success: successOccurred }" class="counter">
-              <v-icon color="green" size="24">mdi-check-circle</v-icon>
-              <span class="counter-text">Completed: {{ totalPuzzless }}</span>
-            </div>
-            <div :class="{ error: errorOccurred }" class="counter">
-              <v-icon color="red" size="24">mdi-close-circle</v-icon>
-              <span class="counter-text">Missed: {{ totalErrors }}</span>
-            </div>
-          </v-card-text>
-        </v-card>
+          <v-card class="mb-4 action-card" elevation="3">
+            <v-card-actions class="action-buttons">
+              <v-card-title class="d-flex align-center justify-center">
+                <v-icon left color="primary" class="mr-2">mdi-lightning-bolt</v-icon>
+                Actions
+              </v-card-title>
+              <v-btn color="primary" @click="restartSession()" class="action-button" elevation="2" rounded>
+                <v-icon left>mdi-restart</v-icon>
+                Restart Session
+              </v-btn>
 
-        <v-card outlined class="mb-4">
-          <v-card-actions class="justify-center" style="padding: 20px;">
-            <v-btn color="white" to="/failed-puzzles" class="ma-2" elevation="5" rounded x-large
-              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-              <v-icon left>mdi-alert-circle</v-icon>
-              Review Failed Puzzles
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+              <v-btn color="warning" to="/failed-puzzles" class="action-button" elevation="2" rounded>
+                <v-icon left>mdi-alert-circle</v-icon>
+                Failed Puzzles
+              </v-btn>
 
-        <v-card outlined>
-          <v-card-text>
-            <v-btn icon size="small" class="ml-2" @click="showInfoModal = true">
-              <v-icon size="30" icon="mdi-information"></v-icon>
-            </v-btn>
-            <v-btn icon href="https://github.com/Fernando9200/chess" size="small" class="ml-2" target="_blank">
-              <v-icon size="30" icon="mdi-github"></v-icon>
-            </v-btn>
-            <v-btn icon href="https://www.linkedin.com/in/fernando-carretto/" size="small" class="ml-2" target="_blank">
-              <v-icon size="30" icon="mdi-linkedin"></v-icon>
-            </v-btn>
-          </v-card-text>
-        </v-card>
+              <v-btn color="info"
+                :href="`https://lichess.org/training/${(puzzleColection[currentPuzzle] as any).PuzzleId}`"
+                class="action-button" elevation="2" rounded target="_blank">
+                <v-icon left>mdi-chess-knight</v-icon>
+                Open on Lichess
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
+          <v-card class="social-card" elevation="3">
+            <v-card-text class="d-flex justify-center">
+              <v-btn icon="mdi-information" class="mx-2" variant="text" @click="showInfoModal = true" size="x-large">
+              </v-btn>
+              <v-btn icon="mdi-github" class="mx-2" variant="text" href="https://github.com/Fernando9200/chess"
+                target="_blank" size="x-large">
+              </v-btn>
+              <v-btn icon="mdi-linkedin" class="mx-2" variant="text"
+                href="https://www.linkedin.com/in/fernando-carretto/" target="_blank" size="x-large">
+              </v-btn>
+            </v-card-text>
+          </v-card>
+        </div>
       </v-col>
 
-      <!-- Info Modal -->
-      <v-dialog v-model="showInfoModal" max-width="600">
-        <v-card>
-          <v-card-title class="headline">Info</v-card-title>
-          <v-card-text>
-            This app uses chess puzzles from the Lichess database to help you improve your tactical skills. You can pick
-            your skill level and stick with it, allowing you to practice as much as you need at a difficulty that feels
-            right for you. Unlike Lichess, which automatically adjusts your level and sometimes pushes you into puzzles
-            that are too challenging, this app focuses on steady, targeted improvement. By training at your own pace,
-            you can build a solid foundation and see real progress in your tactics.
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="showInfoModal = false">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-col sm="8" md="5" cols="12" class="board">
+      <!-- Chess Board Column -->
+      <v-col sm="8" md="5" cols="12" class="board-container">
         <ChessPuzzle ref="puzzleRef" @failure="handleFailure" @solved="puzzleSolved"
-          :key="(puzzleColection[currentPuzzle] as any).PuzzleId"
-          :puzzle-data="puzzleColection[currentPuzzle] as any" />
+          :key="(puzzleColection[currentPuzzle] as any).PuzzleId" :puzzle-data="puzzleColection[currentPuzzle] as any"
+          class="chess-board" />
       </v-col>
 
+      <!-- Right Column -->
       <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
-        <v-card outlined class="mb-4">
-          <v-card-text>
-            <div class="d-flex flex-column align-center">
-              <div class="text-h5 mb-2" :class="`${currentPuzzleSkillLevel.color}--text`">
-                {{ currentPuzzleSkillLevel.level }}
+        <div class="cards-container">
+          <v-card class="mb-4 level-card" elevation="3">
+            <v-card-title class="d-flex align-center justify-center">
+              <v-icon left color="primary" class="mr-2">mdi-chess-queen</v-icon>
+              Puzzle Info
+            </v-card-title>
+            <v-card-text>
+              <div class="level-display">
+                <div class="text-h4 mb-2" :class="`${currentPuzzleSkillLevel.color}--text`">
+                  {{ currentPuzzleSkillLevel.level }}
+                </div>
+                <div class="text-h6">
+                  Rating: {{ (puzzleColection[currentPuzzle] as any)?.Rating }}
+                </div>
               </div>
-              <div class="text-subtitle-1">
-                Rating: {{ (puzzleColection[currentPuzzle] as any)?.Rating }}
+            </v-card-text>
+          </v-card>
+
+          <v-card class="mb-4 settings-card" elevation="3">
+            <v-card-title class="d-flex align-center justify-center">
+              <v-icon left class="mr-2">mdi-cog</v-icon>
+              Settings
+            </v-card-title>
+            <v-card-text>
+              <div class="d-flex justify-space-around align-center">
+                <v-switch v-model="auto" label="Auto Next" inset color="primary" />
+
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
-        <v-card outlined class="mb-4">
-          <v-card-title>Settings</v-card-title>
-          <v-card-text>
-            <v-row class="toggle-row" justify="center">
-              <v-col cols="auto">
-                <v-switch inset v-model="auto" label="Auto" />
-              </v-col>
-              <v-col cols="auto">
-                <v-switch :model-value="isDark" color="" hide-details density="compact" inset
-                  false-icon="mdi-white-balance-sunny" true-icon="mdi-weather-night" style="opacity: 0.8"
-                  @update:model-value="toggleDark" class="dark-toggle"></v-switch>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+            </v-card-text>
+          </v-card>
 
-        <v-card outlined class="mb-4">
-          <v-card-title>Puzzle Time</v-card-title>
-          <v-card-text>
-            <StopWatch ref="puzzleClockRef" />
-          </v-card-text>
-        </v-card>
+          <v-card class="mb-4 puzzle-time-card" elevation="3">
+            <v-card-title class="d-flex align-center justify-center">
+              <v-icon left class="mr-2">mdi-timer-outline</v-icon>
+              Puzzle Time
+            </v-card-title>
+            <v-card-text>
+              <StopWatch ref="puzzleClockRef" class="time-display" />
+            </v-card-text>
+          </v-card>
 
-        <v-card outlined class="mb-4">
-          <v-card-actions class="justify-center" style="padding: 20px;">
-            <v-btn :disabled="!solved" color="white" @click="nextPuzzle()" class="ma-2" elevation="5" rounded x-large
-              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-              <v-icon left>mdi-arrow-right-bold-circle-outline</v-icon>
-              Next
-            </v-btn>
+          <v-card class="control-card" elevation="3">
+            <v-card-actions class="d-flex justify-space-around">
+              <v-btn :disabled="!solved" color="white" @click="nextPuzzle()" elevation="2" rounded>
+                <v-icon left>mdi-arrow-right-bold</v-icon>
+                Next
+              </v-btn>
 
-            <v-btn :disabled="!allowClue" color="white" @click="sendClue()" class="ma-2" elevation="5" rounded x-large
-              style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-              <v-icon left>mdi-lightbulb</v-icon>
-              Clue
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        <v-card outlined class="mb-4">
-          <v-card-actions class="justify-center" style="padding: 20px;">
-            <!-- Go to Lichess Button -->
-            <v-btn color="gray"
-              :href="`https://lichess.org/training/${(puzzleColection[currentPuzzle] as any).PuzzleId}`" class="ma-2"
-              elevation="5" rounded x-large style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);"
-              target="_blank">
-              <v-icon left>mdi-chess-knight</v-icon>
-              Open on Lichess
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" class="text-center">
-        <v-btn color="gray" variant="outlined" @click="zenMode = !zenMode">
-          {{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}
-        </v-btn>
+              <v-btn :disabled="!allowClue" color="warning" @click="sendClue()" elevation="2" rounded>
+                <v-icon left>mdi-lightbulb</v-icon>
+                Clue
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
+
+    <!-- Zen Mode Toggle -->
+    <v-btn color="gray" variant="outlined" @click="zenMode = !zenMode" class="zen-toggle">
+      <v-icon left>{{ zenMode ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
+      {{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}
+    </v-btn>
+
+    <!-- Info Modal -->
+    <v-dialog v-model="showInfoModal" max-width="600">
+      <v-card class="info-modal" elevation="3">
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>
+          This app uses chess puzzles from the Lichess database to help you improve your tactical skills. You can pick
+          your skill level and stick with it, allowing you to practice as much as you need at a difficulty that feels
+          right for you. Unlike Lichess, which automatically adjusts your level and sometimes pushes you into puzzles
+          that are too challenging, this app focuses on steady, targeted improvement. By training at your own pace,
+          you can see real progress in your tactics.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showInfoModal = false" rounded elevation="2">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 
 <style scoped>
-html,
-body,
-#app,
-.v-application,
-.v-container {
-  height: 100%;
-  overflow-y: auto;
-  /* Ensure the container allows vertical scrolling */
-}
-
-.success {
-  color: green;
-}
-
-.error {
-  color: red;
-}
-
-.board {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-height: 100vh;
-  /* overflow: hidden;  <-- Ensure this is removed */
-}
-
-.text-center {
-  text-align: center;
-  margin-top: 0;
-}
-
 .training {
-  margin-top: 1vh;
-  overflow-y: auto;
-  /* Ensure the container allows vertical scrolling */
+  min-height: 100vh;
+  padding: 0.5rem;
 }
 
-.toggle-row {
-  display: flex;
-  align-items: center;
+.cards-container {
+  position: sticky;
+  top: 2rem;
+  /* Increased space from top */
+  padding-top: 2rem;
+  /* Added padding to match board spacing */
 }
 
-.dark-toggle {
-  margin-top: -20px;
-  /* Adjust this value as needed to align the switches */
+.stats-card,
+.action-card,
+.social-card,
+.level-card,
+.settings-card,
+.puzzle-time-card,
+.control-card {
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .counter-card {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  flex-wrap: wrap;
-  /* Allow wrapping on smaller screens */
+  padding: 1rem;
+}
+
+.info-modal {
+  background: rgba(0, 0, 0, 0.95) !important;
+  /* Black background with high opacity */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .counter {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin: 8px 0;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .counter-text {
-  margin-left: 8px;
-  text-transform: uppercase;
+  font-size: 1.5rem;
   font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.divider {
+  width: 1px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.action-button {
+  width: 100%;
+  height: 48px;
+}
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2.9rem;
+  /* Increased space from top to match cards */
+}
+
+.chess-board {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1;
+}
+
+.level-display {
+  text-align: center;
+  padding: 1rem;
+}
+
+.time-display {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.zen-toggle {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  min-width: 180px;
+}
+
+@media (max-width: 600px) {
+  .counter-card {
+    flex-direction: row;
+  }
+
+  .action-buttons {
+    gap: 0.5rem;
+  }
+
+  .time-display {
+    font-size: 1.25rem;
+  }
+
+  .board-container {
+    padding-top: 1rem;
+    /* Adjusted for mobile */
+  }
+
+  .cards-container {
+    position: static;
+    padding-top: 1rem;
+    /* Adjusted for mobile */
+  }
+
+  .zen-toggle {
+    bottom: 0.5rem;
+  }
 }
 </style>

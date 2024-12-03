@@ -2,7 +2,6 @@
 import { ref, onMounted, computed } from 'vue'
 import ChessPuzzle from './ChessPuzzle.vue'
 import { VProgressLinear } from 'vuetify/components'
-import FailedPuzzlesAnalysis from '@/components/FailedPuzzlesAnalysis.vue'
 import puzzles0_500 from '@/puzzles/ratings_0_500.json'
 import puzzles500_1000 from '@/puzzles/ratings_500_1000.json'
 import puzzles1000_1500 from '@/puzzles/ratings_1000_1500.json'
@@ -61,20 +60,17 @@ const allowClue = ref(false)
 const errorOccurred = ref(false)
 const successOccurred = ref(false)
 const zenMode = ref(false)
-
-// Progress tracking
 const totalPuzzles = ref(0)
 const solvedPuzzlesCount = ref(0)
+const showInfoModal = ref(false)
 
-// Computed properties for progress tracking
 const remainingPuzzles = computed(() => failedPuzzles.value.length)
 const progressPercentage = computed(() => {
   if (totalPuzzles.value === 0) return 0
   const percentage = (solvedPuzzlesCount.value / totalPuzzles.value) * 100
-  return Math.min(percentage, 100) // Ensure it doesn't exceed 100%
+  return Math.min(percentage, 100)
 })
 
-// Compute current puzzle's skill level
 const currentPuzzleSkillLevel = computed(() => {
   const rating = failedPuzzles.value[currentPuzzleIndex.value]?.Rating || 0
 
@@ -87,39 +83,12 @@ const currentPuzzleSkillLevel = computed(() => {
   return { level: 'Grandmaster', color: 'red' }
 })
 
-// Load puzzles from all levels that were failed
-const getAllFailedPuzzles = (): BasePuzzleData[] => {
-  const allFailedPuzzles: BasePuzzleData[] = []
-
-  for (let level = 0; level <= 6; level++) {
-    const failedIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${level}`) || '[]') as number[]
-    const levelPuzzles = failedIndices.map(index => {
-      const puzzle = puzzleCollections[level][index]
-      if (puzzle) {
-        return {
-          ...puzzle,
-          originalLevel: level,
-          originalIndex: index
-        }
-      }
-      return null
-    }).filter(Boolean) as BasePuzzleData[]
-
-    allFailedPuzzles.push(...levelPuzzles)
-  }
-
-  return allFailedPuzzles
-}
-
 onMounted(() => {
   loadFailedPuzzles()
 })
 
 const loadFailedPuzzles = () => {
-  // The puzzles are now already loaded with their original level and index
   failedPuzzles.value = props.puzzleCollection as ExtendedPuzzleData[]
-
-  // Initialize progress tracking
   totalPuzzles.value = failedPuzzles.value.length
   solvedPuzzlesCount.value = 0
 }
@@ -165,14 +134,11 @@ const puzzleSolved = () => {
   const currentPuzzle = failedPuzzles.value[currentPuzzleIndex.value]
   const level = currentPuzzle.originalLevel
 
-  // Get the failed puzzles for the specific level
   const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${level}`) || '[]') as number[]
   const updatedIndices = failedPuzzleIndices.filter(index => index !== currentPuzzle.originalIndex)
 
-  // Update the localStorage for the specific level
   localStorage.setItem(`failedPuzzles_${level}`, JSON.stringify(updatedIndices))
 
-  // Remove puzzle from current view
   failedPuzzles.value.splice(currentPuzzleIndex.value, 1)
 
   if (currentPuzzleIndex.value >= failedPuzzles.value.length && currentPuzzleIndex.value > 0) {
@@ -186,11 +152,9 @@ const removePuzzle = () => {
   const currentPuzzle = failedPuzzles.value[currentPuzzleIndex.value]
   const level = currentPuzzle.originalLevel
 
-  // Get the failed puzzles for the specific level
   const failedPuzzleIndices = JSON.parse(localStorage.getItem(`failedPuzzles_${level}`) || '[]') as number[]
   const updatedIndices = failedPuzzleIndices.filter(index => index !== currentPuzzle.originalIndex)
 
-  // Update the localStorage for the specific level
   localStorage.setItem(`failedPuzzles_${level}`, JSON.stringify(updatedIndices))
 
   failedPuzzles.value.splice(currentPuzzleIndex.value, 1)
@@ -202,7 +166,6 @@ const removePuzzle = () => {
 }
 
 const clearFailedPuzzles = () => {
-  // Clear failed puzzles from all levels
   for (let level = 0; level <= 6; level++) {
     localStorage.setItem(`failedPuzzles_${level}`, '[]')
   }
@@ -231,10 +194,10 @@ definePage({
 <template>
   <v-container class="training" fluid>
     <v-row class="training" justify="center">
-      <!-- Empty State: No Failed Puzzles -->
+      <!-- Empty State -->
       <template v-if="failedPuzzles.length === 0">
         <v-col cols="12" class="text-center">
-          <v-card class="pa-4 text-center empty-state">
+          <v-card class="empty-state" elevation="3">
             <v-card-text>
               <p class="text-h6 mb-2">No failed puzzles yet</p>
               <p class="text-body-1">Puzzles you get wrong will appear here for review</p>
@@ -243,131 +206,142 @@ definePage({
         </v-col>
       </template>
 
-      <!-- Main Interface: Displayed When There Are Failed Puzzles -->
+      <!-- Main Interface -->
       <template v-else>
         <!-- Left Column -->
         <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
-          <v-card outlined class="mb-4">
-            <v-card-title class="text-h6">Failed Puzzles Review</v-card-title>
-            <v-card-subtitle>Practice the puzzles you got wrong</v-card-subtitle>
-            <v-card-text>
-              <v-btn color="white" @click="clearFailedPuzzles" class="ma-2" elevation="5" rounded x-large
-                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-                <v-icon start>mdi-delete</v-icon>
-                Clear All
-              </v-btn>
-            </v-card-text>
-          </v-card>
+          <div class="cards-container">
+            <v-card class="mb-4 stats-card" elevation="3">
+              <v-card-title class="d-flex align-center justify-center">
+                <v-icon left color="primary" class="mr-2">mdi-alert-circle</v-icon>
+                Failed Puzzles Review
+              </v-card-title>
+              <v-card-subtitle>Practice the puzzles you got wrong</v-card-subtitle>
+              <v-card-actions class="action-buttons">
+                <v-btn color="error" @click="clearFailedPuzzles" class="action-button" elevation="5" rounded x-large>
+                  <v-icon start>mdi-delete</v-icon>
+                  Clear All
+                </v-btn>
+              </v-card-actions>
+            </v-card>
 
-          <!-- Enhanced Progress Card -->
-          <v-card outlined class="progress-card mb-4">
-            <v-card-title class="text-h6">Progress Dashboard</v-card-title>
-            <v-card-text>
-              <v-progress-linear :model-value="progressPercentage" max="100" color="success" height="20" rounded
-                class="my-4">
-                <template #default>
-                  <strong>{{ Math.round(progressPercentage) }}%</strong>
-                </template>
-              </v-progress-linear>
+            <v-card class="mb-4 progress-card" elevation="3">
+              <v-card-title class="d-flex align-center justify-center">
+                <v-icon left color="primary" class="mr-2">mdi-chart-line</v-icon>
+                Progress Dashboard
+              </v-card-title>
+              <v-card-text>
+                <v-progress-linear :model-value="progressPercentage" color="success" height="20" rounded class="my-4">
+                  <template #default>
+                    <strong>{{ Math.round(progressPercentage) }}%</strong>
+                  </template>
+                </v-progress-linear>
 
-              <!-- Stats Grid -->
-              <div class="stats-grid">
-                <div class="stat-item">
-                  <div class="stat-value success--text">{{ solvedPuzzlesCount }}</div>
-                  <div class="stat-label">Solved</div>
+                <div class="stats-grid">
+                  <div class="stat-item">
+                    <div class="stat-value success--text">{{ solvedPuzzlesCount }}</div>
+                    <div class="stat-label">Solved</div>
+                  </div>
+
+                  <div class="stat-item">
+                    <div class="stat-value error--text">{{ remainingPuzzles }}</div>
+                    <div class="stat-label">Remaining</div>
+                  </div>
+
+                  <div class="stat-item">
+                    <div class="stat-value primary--text">{{ totalPuzzles }}</div>
+                    <div class="stat-label">Total</div>
+                  </div>
                 </div>
+              </v-card-text>
+            </v-card>
+            <v-card class="navigation-controls mt-4" elevation="3">
+              <v-card-text class="d-flex justify-space-between align-center py-2">
+                <v-btn :disabled="currentPuzzleIndex === 0" @click="previousPuzzle" color="white" variant="outlined"
+                  elevation="5" rounded style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+                  <v-icon start>mdi-chevron-left</v-icon>
+                  Previous
+                </v-btn>
 
-                <div class="stat-item">
-                  <div class="stat-value error--text">{{ remainingPuzzles }}</div>
-                  <div class="stat-label">Remaining</div>
-                </div>
+                <span class="text-body-1 mx-4">
+                  {{ currentPuzzleIndex + 1 }} / {{ failedPuzzles.length }}
+                </span>
 
-                <div class="stat-item">
-                  <div class="stat-value primary--text">{{ totalPuzzles }}</div>
-                  <div class="stat-label">Total</div>
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
+                <v-btn :disabled="currentPuzzleIndex === failedPuzzles.length - 1" @click="nextPuzzle" color="white"
+                  variant="outlined" elevation="5" rounded
+                  style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+                  Next
+                  <v-icon end>mdi-chevron-right</v-icon>
+                </v-btn>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
 
         <!-- Center Column - Chess Board -->
         <v-col sm="8" md="5" cols="12" class="board-container">
           <div class="board-wrapper">
             <ChessPuzzle ref="puzzleRef" :puzzle-data="failedPuzzles[currentPuzzleIndex]"
-              :key="failedPuzzles[currentPuzzleIndex].PuzzleId" @failure="handleFailure" @solved="puzzleSolved" />
+              :key="failedPuzzles[currentPuzzleIndex].PuzzleId" @failure="handleFailure" @solved="puzzleSolved"
+              class="chess-board" />
           </div>
-
-          <!-- Navigation Controls -->
-          <v-card class="navigation-controls mt-4">
-            <v-card-text class="d-flex justify-space-between align-center py-2">
-              <v-btn :disabled="currentPuzzleIndex === 0" @click="previousPuzzle" color="white" variant="outlined"
-                elevation="5" rounded style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-                <v-icon start>mdi-chevron-left</v-icon>
-                Previous
-              </v-btn>
-
-              <span class="text-body-1 mx-4">
-                {{ currentPuzzleIndex + 1 }} / {{ failedPuzzles.length }}
-              </span>
-
-              <v-btn :disabled="currentPuzzleIndex === failedPuzzles.length - 1" @click="nextPuzzle" color="white"
-                variant="outlined" elevation="5" rounded
-                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-                Next
-                <v-icon end>mdi-chevron-right</v-icon>
-              </v-btn>
-            </v-card-text>
-          </v-card>
         </v-col>
 
         <!-- Right Column -->
         <v-col sm="6" md="3" cols="12" class="text-center" v-show="!zenMode">
-          <!-- Puzzle Info Card -->
-          <v-card outlined class="mb-4">
-            <v-card-title class="text-h6">Puzzle Info</v-card-title>
-            <v-card-text>
-              <div class="d-flex flex-column align-center">
-                <div class="text-h5 mb-2" :class="`${currentPuzzleSkillLevel.color}--text`">
-                  {{ currentPuzzleSkillLevel.level }}
+          <div class="cards-container">
+            <v-card class="mb-4 level-card" elevation="3">
+              <v-card-title class="d-flex align-center justify-center">
+                <v-icon left color="primary" class="mr-2">mdi-chess-queen</v-icon>
+                Puzzle Info
+              </v-card-title>
+              <v-card-text>
+                <div class="level-display">
+                  <div class="text-h4 mb-2" :class="`${currentPuzzleSkillLevel.color}--text`">
+                    {{ currentPuzzleSkillLevel.level }}
+                  </div>
+                  <div class="text-h6">
+                    Rating: {{ failedPuzzles[currentPuzzleIndex].Rating }}
+                  </div>
                 </div>
-                <div class="text-subtitle-1">
-                  Rating: {{ failedPuzzles[currentPuzzleIndex].Rating }}
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
+              </v-card-text>
+            </v-card>
 
-          <!-- Actions Card -->
-          <v-card outlined class="mb-4">
-            <v-card-title class="text-h6">Actions</v-card-title>
-            <v-card-text class="d-flex flex-column gap-2">
-              <v-btn color="white" :href="`https://lichess.org/training/${failedPuzzles[currentPuzzleIndex].PuzzleId}`"
-                class="ma-2" elevation="5" rounded x-large
-                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);" target="_blank">
-                <v-icon start>mdi-chess-knight</v-icon>
-                Open on Lichess
-              </v-btn>
+            <v-card class="mb-4 action-card" elevation="3">
+              <v-card-title class="d-flex align-center justify-center">
+                <v-icon left color="primary" class="mr-2">mdi-lightning-bolt</v-icon>
+                Actions
+              </v-card-title>
+              <v-card-text>
+                <v-card-actions class="action-buttons">
+                  <v-btn color="info"
+                    :href="`https://lichess.org/training/${failedPuzzles[currentPuzzleIndex].PuzzleId}`"
+                    class="action-button" elevation="2" rounded target="_blank">
+                    <v-icon left>mdi-chess-knight</v-icon>
+                    Open on Lichess
+                  </v-btn>
 
-              <v-btn :disabled="!allowClue" color="white" @click="sendClue" class="ma-2" elevation="5" rounded x-large
-                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-                <v-icon start>mdi-lightbulb</v-icon>
-                Show Clue
-              </v-btn>
+                  <v-btn :disabled="!allowClue" color="warning" @click="sendClue()" class="action-button" elevation="2"
+                    rounded>
+                    <v-icon left>mdi-lightbulb</v-icon>
+                    Clue
+                  </v-btn>
 
-              <v-btn color="white" @click="removePuzzle" class="ma-2" elevation="5" rounded x-large
-                style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
-                <v-icon start>mdi-close</v-icon>
-                Remove Puzzle
-              </v-btn>
-            </v-card-text>
-          </v-card>
+                  <v-btn color="error" @click="removePuzzle" class="action-button" elevation="2" rounded>
+                    <v-icon left>mdi-close</v-icon>
+                    Remove Puzzle
+                  </v-btn>
+                </v-card-actions>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
 
-        <!-- Zen Mode Button -->
+        <!-- Zen Mode Toggle -->
         <v-col cols="12" class="text-center">
-          <v-btn color="white" variant="outlined" @click="zenMode = !zenMode" elevation="5" rounded
+          <v-btn color="white" variant="outlined" @click="zenMode = !zenMode" class="zen-toggle" elevation="5" rounded
             style="border: 2px solid white; background-color: rgba(0, 0, 0, 0.5);">
+            <v-icon start>{{ zenMode ? 'mdi-fullscreen-exit' : 'mdi-fullscreen' }}</v-icon>
             {{ zenMode ? 'Exit Zen Mode' : 'Enter Zen Mode' }}
           </v-btn>
         </v-col>
@@ -377,57 +351,60 @@ definePage({
 </template>
 
 <style scoped>
-html,
-body,
-#app,
-.v-application,
-.v-container {
-  height: 100%;
-  overflow-y: auto;
+.training {
+  min-height: 100vh;
+  padding: 0.5rem;
+}
+
+.cards-container {
+  position: sticky;
+  top: 2rem;
+  padding-top: 0.85rem;
+  /* Changed from 2rem to 1rem */
+}
+
+.stats-card,
+.action-card,
+.progress-card,
+.level-card,
+.navigation-controls {
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.empty-state {
+  max-width: 400px;
+  margin: auto;
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .board-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 80vh;
+  align-items: center;
+  padding-top: 1.7rem;
+  /* Changed from 2.7rem to 1.7rem to maintain consistency */
 }
 
 .board-wrapper {
   width: 100%;
   max-width: 600px;
   aspect-ratio: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.text-center {
-  text-align: center;
-  margin-top: 0;
-}
-
-.training {
-  margin-top: 1vh;
-  overflow-y: auto;
-}
-
-.navigation-controls {
+.chess-board {
   width: 100%;
-  max-width: 500px;
-  background-color: transparent;
-  box-shadow: none;
+  max-width: 600px;
+  aspect-ratio: 1;
 }
 
-.empty-state {
-  max-width: 400px;
-  margin: auto;
-}
-
-.progress-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+.level-display {
+  text-align: center;
+  padding: 1rem;
 }
 
 .stats-grid {
@@ -454,14 +431,55 @@ body,
   opacity: 0.8;
 }
 
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.action-button {
+  width: 100%;
+  height: 40px;
+}
+
+.navigation-controls {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 1rem;
+}
+
+.zen-toggle {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  min-width: 180px;
+}
+
+.v-btn {
+  height: 35px !important;
+  transition: all 0.3s ease;
+}
+
+.v-btn:not(:disabled):hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.v-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 600px) {
-  .board-wrapper {
-    max-width: 100%;
-    padding: 0 16px;
+  .board-container {
+    padding-top: 1rem;
   }
 
-  .navigation-controls {
-    padding: 0.5rem;
+  .cards-container {
+    position: static;
+    padding-top: 1rem;
   }
 
   .stats-grid {
@@ -475,5 +493,39 @@ body,
   .stat-label {
     font-size: 0.75rem;
   }
+
+  .action-buttons {
+    gap: 0.5rem;
+  }
+
+  .zen-toggle {
+    bottom: 0.5rem;
+  }
+
+  .navigation-controls {
+    padding: 0.5rem;
+  }
+
+  .v-btn {
+    height: 36px !important;
+  }
+}
+
+.counter-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.success-counter,
+.error-counter {
+  transition: transform 0.3s ease;
+}
+
+.success-counter {
+  transform: scale(1.1);
+}
+
+.error-counter {
+  transform: scale(1.1);
 }
 </style>
