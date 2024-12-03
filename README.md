@@ -2,7 +2,8 @@
 
 **Puzzle Gambit** is a chess puzzle-solving application designed to help users improve their tactical skills using puzzles from the Lichess database. The app adapts to the user's skill level, offering a personalized training experience.
 
-![image](https://github.com/user-attachments/assets/bf08cc85-02ba-4ae2-b624-5832e99e9e6b)
+![thumbnail2](https://github.com/user-attachments/assets/4bd9237d-2907-4b7f-9862-24c53f4c4e2b)
+
 
 
 ## Features
