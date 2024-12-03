@@ -351,6 +351,16 @@ definePage({
 </template>
 
 <style scoped>
+html,
+body,
+#app,
+.v-application,
+.v-container {
+  height: 100%;
+  overflow-y: auto;
+  /* Ensure the container allows vertical scrolling */
+}
+
 .training {
   min-height: 100vh;
   padding: 0.5rem;

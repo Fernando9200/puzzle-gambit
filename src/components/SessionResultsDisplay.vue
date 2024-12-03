@@ -232,4 +232,172 @@ function getAccuracyColor(accuracy: number): string {
   justify-content: center;
   align-items: center;
 }
+
+/* Enhanced Responsive styles */
+@media (max-width: 768px) {
+  .session-results {
+    margin: clamp(5px, 2vw, 10px);
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  /* Improved table scrolling experience */
+  .v-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    position: relative;
+  }
+
+  /* Custom scrollbar styling */
+  .v-table::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .v-table::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .v-table::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  /* Scroll shadows for better UX */
+  .v-table::before,
+  .v-table::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .v-table::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba(30, 30, 30, 0.8), transparent);
+  }
+
+  .v-table::after {
+    right: 0;
+    background: linear-gradient(-90deg, rgba(30, 30, 30, 0.8), transparent);
+  }
+
+  .v-table:not([data-scroll='0'])::before {
+    opacity: 1;
+  }
+
+  .v-table:not([data-scroll='end'])::after {
+    opacity: 1;
+  }
+
+  /* Enhanced card title responsiveness */
+  .v-card-title {
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(0.75rem, 3vw, 1rem) !important;
+  }
+
+  .v-card-title .d-flex {
+    width: 100%;
+    justify-content: center !important;
+  }
+
+  /* Sticky header */
+  .v-table thead tr {
+    position: sticky;
+    top: 0;
+    background: rgba(30, 30, 30, 0.95);
+    z-index: 2;
+    backdrop-filter: blur(8px);
+  }
+
+  /* Improved cell responsiveness */
+  .result-row td,
+  .sortable-header {
+    padding: clamp(0.4rem, 2vw, 0.75rem) !important;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    white-space: nowrap;
+  }
+
+  /* Enhanced touch targets */
+  .v-chip {
+    height: clamp(24px, 4vw, 28px) !important;
+    font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+    padding: 0 8px !important;
+  }
+
+  .delete-btn {
+    min-width: 44px;
+    min-height: 44px;
+    opacity: 1;
+    touch-action: manipulation;
+  }
+
+  /* Better empty state responsiveness */
+  .empty-state {
+    min-height: clamp(200px, 50vh, 300px);
+    padding: clamp(1rem, 4vw, 2rem);
+    text-align: center;
+  }
+}
+
+/* Enhanced small screen optimizations */
+@media (max-width: 480px) {
+
+  /* Card optimizations */
+  .session-results {
+    border-radius: 8px;
+  }
+
+  .text-h5 {
+    font-size: clamp(1rem, 4vw, 1.25rem) !important;
+    text-align: center;
+  }
+
+  /* Transform table for better mobile view */
+  .v-table :is(th, td):nth-child(3),
+  /* Duration */
+  .v-table :is(th, td):nth-child(4),
+  /* Solved */
+  .v-table :is(th, td):nth-child(5) {
+    /* Failed */
+    display: none;
+  }
+
+  /* Enhance remaining columns */
+  .result-row td:first-child {
+    font-weight: 500;
+  }
+
+  /* Compact action buttons */
+  .v-card-title .v-btn {
+    padding: 0 16px !important;
+    height: 36px !important;
+  }
+
+  /* Add subtle cell separators */
+  .result-row td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+}
+
+/* Print optimization */
+@media print {
+  .session-results {
+    margin: 0;
+    background: white !important;
+    color: black !important;
+  }
+
+  .delete-btn,
+  .v-card-title .v-btn {
+    display: none !important;
+  }
+}
 </style>
