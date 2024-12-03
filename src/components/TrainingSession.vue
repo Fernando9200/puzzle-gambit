@@ -237,7 +237,7 @@ function restartSession() {
   // Reset the session
   totalErrors.value = 0
   totalPuzzless.value = 0
-  clearFailedPuzzles()
+  // clearFailedPuzzles()
   sessionClockRef.value.restart()
   nextPuzzle()
 }
