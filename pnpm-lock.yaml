@@ -11,9 +11,6 @@ importers:
       '@datadog/browser-logs':
         specifier: ^5.8.0
         version: 5.8.0
-      '@types/uuid':
-        specifier: ^9.0.7
-        version: 9.0.7
       '@vueuse/core':
         specifier: ^10.7.1
         version: 10.7.1(vue@3.4.3(typescript@5.3.3))
@@ -66,6 +63,9 @@ importers:
       '@types/node':
         specifier: ^20.10.6
         version: 20.10.6
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@vitejs/plugin-vue':
         specifier: ^5.0.2
         version: 5.0.2(vite@5.0.10(@types/node@20.10.6))(vue@3.4.3(typescript@5.3.3))
@@ -542,8 +542,8 @@ packages:
   '@types/tough-cookie@4.0.5':
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
 
-  '@types/uuid@9.0.7':
-    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
+  '@types/uuid@10.0.0':
+    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
@@ -2711,7 +2711,7 @@ snapshots:
 
   '@types/tough-cookie@4.0.5': {}
 
-  '@types/uuid@9.0.7': {}
+  '@types/uuid@10.0.0': {}
 
   '@types/web-bluetooth@0.0.20': {}
 
