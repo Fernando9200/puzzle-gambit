@@ -6,7 +6,6 @@ export default defineComponent({
 
 <template>
   <div class="wrapper">
-    <v-icon class="logo mb-4" icon="custom:logo-3-pj" />
     <p class="text-h5">404 Not Found</p>
   </div>
 </template>
@@ -18,6 +17,7 @@ export default defineComponent({
   text-align: center;
   opacity: 0.6;
 }
+
 .logo {
   font-size: 12em;
   opacity: 0.2;
