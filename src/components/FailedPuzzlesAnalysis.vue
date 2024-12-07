@@ -166,7 +166,7 @@ const removePuzzle = () => {
 }
 
 const clearFailedPuzzles = () => {
-  for (let level = 0; level <= 6; level++) {
+  for (let level = 0; level <= 10; level++) {
     localStorage.setItem(`failedPuzzles_${level}`, '[]')
   }
 
@@ -199,6 +199,7 @@ definePage({
         <v-col cols="12" class="text-center">
           <v-card class="empty-state" elevation="3">
             <v-card-text>
+              <v-icon color="grey" size="48" class="mb-4">mdi-chess-king</v-icon>
               <p class="text-h6 mb-2">No failed puzzles yet</p>
               <p class="text-body-1">Puzzles you get wrong will appear here for review</p>
             </v-card-text>

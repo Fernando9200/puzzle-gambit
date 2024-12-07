@@ -45,11 +45,15 @@ function getSkillLevelName(level: number): string {
   const levels = {
     0: '0-500',
     1: '500-1000',
-    2: '1000-1500',
-    3: '1500-2000',
-    4: '2000-2500',
-    5: '2500-3000',
-    6: '3000-3500'
+    2: '1000-1250',
+    3: '1250-1500',
+    4: '1500-1750',
+    5: '1750-2000',
+    6: '2000-2250',
+    7: '2250-2500',
+    8: '2500-2750',
+    9: '2750-3000',
+    10: '3000-3500'
   }
   return levels[level as keyof typeof levels] || 'Unknown'
 }
@@ -121,9 +125,21 @@ function getAccuracyColor(accuracy: number): string {
           <tr v-for="result in sortedResults" :key="result.id" class="result-row">
             <td class="text-no-wrap">{{ formatDate(result.date) }}</td>
             <td>
-              <v-chip
-                :color="['success', 'info', 'warning', 'error', 'purple', 'orange', 'deep-orange'][result.skillLevel]"
-                size="small" variant="outlined" class="font-weight-medium">
+              <v-chip :color="[
+                'green',          // 0-500
+                'light-green',    // 500-750
+                'cyan',           // 750-1000
+                'light-blue',     // 1000-1250
+                'blue',           // 1250-1500
+                'indigo',         // 1500-1750
+                'deep-purple',    // 1750-2000
+                'purple',         // 2000-2250
+                'pink',           // 2250-2500
+                'deep-orange',    // 2500-2750
+                'red',            // 2750-3000
+                'red-darken-2',   // 3000-3250
+                'red-darken-4'    // 3250-3500
+              ][result.skillLevel]" size="small" variant="outlined" class="font-weight-medium">
                 {{ getSkillLevelName(result.skillLevel) }}
               </v-chip>
             </td>
@@ -143,7 +159,7 @@ function getAccuracyColor(accuracy: number): string {
         </tbody>
       </v-table>
       <div v-else class="empty-state pa-8 text-center">
-        <v-icon color="grey" size="48" class="mb-4">mdi-chess</v-icon>
+        <v-icon color="grey" size="48" class="mb-4">mdi-chess-king</v-icon>
         <div class="text-h6 text-grey mb-2">No training sessions recorded yet</div>
         <div class="text-body-1 text-grey-darken-1">Complete some puzzles to see your progress here</div>
       </div>

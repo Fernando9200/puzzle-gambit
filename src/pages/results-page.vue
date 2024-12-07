@@ -15,7 +15,7 @@ definePage({
   meta: {
     icon: 'mdi-chart-box',
     title: 'Results',
-    drawerIndex: 8,
+    drawerIndex: 12,
   },
 })
 </script>

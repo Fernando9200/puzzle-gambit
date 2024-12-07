@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import router from '@/plugins/router';
-import data from '../puzzles/ratings_1500_2000.json'
+import data from '../puzzles/ratings_2250_2500.json'
 definePage({
   meta: {
-    title: '1500-2000',
-    icon: 'mdi-chess-rook',
-    drawerIndex: 3,
+    title: '2250-2500',
+    icon: 'mdi-crown-outline',
+    drawerIndex: 7,
   },
 })
 </script>
 
 <template>
   <div class="wrapper full-size">
-    <TrainingSession :puzzle-colection="data" :level="3" />
+    <TrainingSession :puzzle-colection="data" :level="7" />
   </div>
 </template>
 
